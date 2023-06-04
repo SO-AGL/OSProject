@@ -16,6 +16,7 @@ public class SchedulerSimulator {
 
         shortTermScheduler.setNotificationInterface(userInterface);
         longTermScheduler.setInterSchedulerInterface(shortTermScheduler);
+        longTermScheduler.setNotificationInterface(userInterface);
         userInterface.setControlInterface(shortTermScheduler);
         userInterface.setSubmissionInterface(longTermScheduler);
     }

@@ -1,13 +1,19 @@
 package domain.impl;
 
 import domain.api.InterSchedulerInterface;
+import domain.api.NotificationInterface;
 import domain.api.SubmissionInterface;
 
 public class LongTermScheduler implements SubmissionInterface {
     private InterSchedulerInterface interSchedulerInterface = null;
+    private NotificationInterface notificationInterface = null;
 
     public void setInterSchedulerInterface(InterSchedulerInterface interSchedulerInterface) {
         this.interSchedulerInterface = interSchedulerInterface;
+    }
+
+    public void setNotificationInterface(NotificationInterface notificationInterface) {
+        this.notificationInterface = notificationInterface;
     }
 
     @Override
