@@ -20,4 +20,9 @@ public class SchedulerSimulator {
         userInterface.setControlInterface(shortTermScheduler);
         userInterface.setSubmissionInterface(longTermScheduler);
     }
+
+    public void start() {
+        userInterface.start();
+    }
+
 }

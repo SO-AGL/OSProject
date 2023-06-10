@@ -4,7 +4,7 @@ import domain.api.InterSchedulerInterface;
 import domain.api.NotificationInterface;
 import domain.api.SubmissionInterface;
 
-public class LongTermScheduler implements SubmissionInterface {
+public class LongTermScheduler extends Thread implements SubmissionInterface {
     private InterSchedulerInterface interSchedulerInterface = null;
     private NotificationInterface notificationInterface = null;
 
@@ -26,6 +26,11 @@ public class LongTermScheduler implements SubmissionInterface {
     public void displaySubmissionQueue() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'displaySubmissionQueue'");
+    }
+
+    public void run() {
+        // TODO Auto-generated method stub
+        
     }
 
 }
