@@ -3,7 +3,7 @@ package domain.impl;
 import domain.api.InterSchedulerInterface;
 import domain.api.SubmissionInterface;
 
-public class LongTermScheduler implements SubmissionInterface {
+public class LongTermScheduler extends Thread implements SubmissionInterface {
     private InterSchedulerInterface interSchedulerInterface = null;
 
     public void setInterSchedulerInterface(InterSchedulerInterface interSchedulerInterface) {
@@ -22,4 +22,9 @@ public class LongTermScheduler implements SubmissionInterface {
         throw new UnsupportedOperationException("Unimplemented method 'displaySubmissionQueue'");
     }
 
+    public void run() {
+        // TODO Auto-generated method stub
+
+    }
+    
 }

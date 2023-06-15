@@ -4,7 +4,7 @@ import domain.api.ControlInterface;
 import domain.api.InterSchedulerInterface;
 import domain.api.NotificationInterface;
 
-public class ShortTermScheduler implements ControlInterface, InterSchedulerInterface {
+public class ShortTermScheduler extends Thread implements ControlInterface, InterSchedulerInterface {
     private NotificationInterface notificationInterface;
 
     public void setNotificationInterface(NotificationInterface notificationInterface) {
@@ -25,8 +25,7 @@ public class ShortTermScheduler implements ControlInterface, InterSchedulerInter
 
     @Override
     public void startSimulation() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'startSimulation'");
+        start();
     }
 
     @Override
@@ -51,6 +50,11 @@ public class ShortTermScheduler implements ControlInterface, InterSchedulerInter
     public void displayProcessQueues() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'displayProcessQueues'");
+    }
+
+    public void run() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'run'");
     }
 
 }
