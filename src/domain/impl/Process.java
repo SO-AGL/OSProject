@@ -79,7 +79,7 @@ public class Process {
             var lines = contentMatcher.group(1).split("\n");
 
             for (var line : lines) {
-                var programLine = ProgramLine.fromString(line);
+                var programLine = new ProgramLine(line);
                 body.add(programLine);
             }
         } else {
