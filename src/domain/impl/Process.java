@@ -4,76 +4,95 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 public class Process {
     private String name;
     private int priority;
-    private String body;
+    private List<ProgramLine> body = new ArrayList<>();
     private String rawContent;
     private int timeEstimate;
+    private int remainingTime;
+    private int lineNumber = 0;
+    private int blockedFor = 0;
 
-    public Process(String filePath) throws RuntimeException {
+    public int getBlockedFor() {
+        return blockedFor;
+    }
+
+    public void setBlockedFor(int blockedFor) {
+        this.blockedFor = blockedFor;
+    }
+
+    public ProgramLine getNextLine() throws NoSuchElementException {
+        if (hasNextLine()) {
+            return body.get(lineNumber++);
+        }
+
+        throw new NoSuchElementException();
+    }
+
+    public boolean hasNextLine() {
+        return lineNumber < body.size();
+    }
+
+    public int getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(int remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
+    public Process(String filePath) throws IllegalArgumentException {
         try {
-            var lines = Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
+            rawContent = Files.readString(Paths.get(filePath), StandardCharsets.UTF_8).replaceAll("\r", "");
 
-            var header = lines.get(0);
-            setHeader(header);
-
-            rawContent = String.join("\n", lines);
-            setBody(rawContent);
-
+            setHeader();
+            setBody();
             makeTimeEstimate();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void setHeader(String header) throws RuntimeException {
-        var headerPattern = Pattern.compile("program ([a-zA-Z0-9.]+) (\\d)");
-        var headerMatcher = headerPattern.matcher(header);
+    private void setHeader() throws IllegalArgumentException {
+        var headerPattern = Pattern.compile("^program ([a-zA-Z0-9.]+) (\\d)$", Pattern.MULTILINE);
+        var headerMatcher = headerPattern.matcher(rawContent);
+
         if (headerMatcher.find()) {
             name = headerMatcher.group(1);
             priority = Integer.parseInt(headerMatcher.group(2));
         } else {
-            throw new RuntimeException("Invalid program header");
+            throw new IllegalArgumentException("Invalid program header. Raw input:\n" + rawContent);
         }
     }
 
-    private void setBody(String rawBody) throws RuntimeException {
+    private void setBody() throws IllegalArgumentException {
         var contentPattern = Pattern.compile("begin\n([a-zA-Z0-5 \n]+)end\n?");
-        var contentMatcher = contentPattern.matcher(rawBody);
+        var contentMatcher = contentPattern.matcher(rawContent);
+
         if (contentMatcher.find()) {
-            body = contentMatcher.group(1);
+            var lines = contentMatcher.group(1).split("\n");
+
+            for (var line : lines) {
+                var programLine = ProgramLine.fromString(line);
+                body.add(programLine);
+            }
         } else {
-            throw new RuntimeException("Invalid program content");
+            throw new IllegalArgumentException("Invalid program content. Raw input:\n" + rawContent);
         }
     }
 
     private void makeTimeEstimate() {
-        var scanner = new Scanner(body);
-
-        while (scanner.hasNext()) {
-            var line = scanner.nextLine();
-            timeEstimate += parseLine(line);
+        for (var line : body) {
+            timeEstimate += line.getTimeEstimate();
         }
 
-        scanner.close();
-    }
-
-    private int parseLine(String line) throws RuntimeException {
-        if (line.equalsIgnoreCase("execute")) {
-            return 1;
-        }
-
-        var pattern = Pattern.compile("^block ([1-5])$");
-        var matcher = pattern.matcher(line);
-        if (matcher.find()) {
-            return 1 + Integer.parseInt(matcher.group(1));
-        } else {
-            throw new RuntimeException("Invalid program body. Line: '" + line + "'");
-        }
+        remainingTime = timeEstimate;
     }
 
     @Override
