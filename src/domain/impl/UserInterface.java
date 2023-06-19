@@ -6,9 +6,8 @@ import domain.api.ControlInterface;
 import domain.api.NotificationInterface;
 import domain.api.SubmissionInterface;
 
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
+import java.awt.*;
 
 public class UserInterface extends Thread implements NotificationInterface {
     private ControlInterface controlInterface;
@@ -108,13 +107,69 @@ public class UserInterface extends Thread implements NotificationInterface {
     }
 
     private void createFrame() {
-        var infoDisplayFrame = new JFrame("Simulation Notifcations");
-        infoDisplayText = new JTextArea(10, 30);
-        var scrollPane = new JScrollPane(infoDisplayText);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        infoDisplayFrame.getContentPane().add(scrollPane);
-        infoDisplayFrame.setSize(700, 900);
-        infoDisplayFrame.setVisible(true);
+
+        var frame = new JFrame();
+        var panel = new JPanel();
+
+        var panel_output = new JPanel();
+        var panel_menu = new JPanel();
+        var panel_input = new JPanel();
+        
+        frame.setResizable(false);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        var scrollPane_output = new JScrollPane();
+        var scrollPane_menu = new JScrollPane();
+
+        var textArea_output = new JTextArea(10, 30);
+        var textArea_menu = new JTextArea(10, 30);
+        var textArea_input = new JTextField(30);
+
+        var label_output = new JLabel("Simulation output", SwingConstants.CENTER);
+        var label_menu = new JLabel("Menu", SwingConstants.CENTER);
+        var label_input = new JLabel("Input", SwingConstants.CENTER);
+        var label_input_instruct = new JLabel("Type your command and hit ENTER.", SwingConstants.CENTER);
+
+        label_output.setPreferredSize(new Dimension(120, 20));
+        label_menu.setPreferredSize(new Dimension(120, 20));
+        label_input.setPreferredSize(new Dimension(120, 20));
+
+        scrollPane_output.setViewportView(textArea_output);
+        scrollPane_output.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        scrollPane_menu.setViewportView(textArea_menu);
+        scrollPane_menu.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        textArea_output.setEditable(false);
+        textArea_menu.setEditable(false);
+
+        panel_output.setLayout(new BoxLayout(panel_output, BoxLayout.X_AXIS));
+        panel_menu.setLayout(new BoxLayout(panel_menu, BoxLayout.X_AXIS));
+        panel_input.setLayout(new BoxLayout(panel_input, BoxLayout.X_AXIS));
+
+        panel_output.add(label_output);
+        panel_output.add(scrollPane_output);
+        panel_menu.add(label_menu);
+        panel_menu.add(scrollPane_menu);
+        panel_input.add(label_input);
+        panel_input.add(textArea_input);
+        
+        panel_output.setPreferredSize(new Dimension(600, 385));
+        panel_menu.setPreferredSize(new Dimension(600, 385));
+        panel_input.setPreferredSize(new Dimension(600, 30));
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setPreferredSize(new Dimension(600, 800));
+
+        panel.add(panel_output);
+        panel.add(panel_menu);
+        panel.add(panel_input);
+        panel.add(label_input_instruct);
+
+        frame.getContentPane().add(panel);
+        frame.pack();
+        frame.setVisible(true);
+
     }
 
 }
