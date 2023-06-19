@@ -19,6 +19,10 @@ public class Process {
     private int lineNumber = 0;
     private int blockedFor = 0;
 
+    public String getName() {
+        return name;
+    }
+
     public int getBlockedFor() {
         return blockedFor;
     }
