@@ -50,6 +50,7 @@ public class SchedulerSimulator extends Thread {
     }
 
     public void start() {
+        longTermScheduler.start();
         userInterface.start();
     }
 }
