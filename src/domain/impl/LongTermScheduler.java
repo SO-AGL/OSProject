@@ -29,9 +29,16 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
     @Override
     public boolean submitJob(String fileName) {
-        var newProcess = new Process("../data/" + fileName);
+        
+        var newProcess = new Process("../data/" + fileName); 
+
+        if(newProcess.getName() == null){
+            notificationInterface.display("LongTermScheduler:\nFile not found.");
+            return false;
+        }
 
         if (submissionQueue.size() >= MAX_SUBMISSION_QUEUE_SIZE) {
+            notificationInterface.display("LongTermScheduler:\nFull submission queue.");
             return false;
         }
 
