@@ -15,12 +15,12 @@ public class SchedulerSimulator extends Thread {
     private LongTermScheduler longTermScheduler;
     private ShortTermScheduler shortTermScheduler;
 
-    public SchedulerSimulator() {
+    public SchedulerSimulator(int maxProcessReadySize) {
         var schedulingStrategy = new RoundRobin();
         var quantumTimeMs = 200;
 
         shortTermScheduler = new ShortTermScheduler(schedulingStrategy, quantumTimeMs);
-        longTermScheduler = new LongTermScheduler();
+        longTermScheduler = new LongTermScheduler(maxProcessReadySize);
         userInterface = new UserInterface();
 
         shortTermScheduler.setNotificationInterface(userInterface);

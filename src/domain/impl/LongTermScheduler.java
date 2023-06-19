@@ -12,8 +12,12 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
     private List<Process> submissionQueue = new ArrayList<Process>();
     private int MAX_SUBMISSION_QUEUE_SIZE = 10000;
-    private int MAX_PROCESS_OPEN_SIZE = 2;
+    private int MAX_PROCESS_OPEN_SIZE = 0;
     private int VERIFY_INTERVAL_MS = 1000;
+
+    public LongTermScheduler(int maxProcessOpenSize) {
+        this.MAX_PROCESS_OPEN_SIZE = maxProcessOpenSize;
+    }
 
     public void setInterSchedulerInterface(InterSchedulerInterface interSchedulerInterface) {
         this.interSchedulerInterface = interSchedulerInterface;
