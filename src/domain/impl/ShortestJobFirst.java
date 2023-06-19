@@ -1,7 +1,6 @@
 package domain.impl;
 
 import java.util.PriorityQueue;
-import java.util.Queue;
 
 import domain.api.SchedulingStrategy;
 
