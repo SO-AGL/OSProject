@@ -1,7 +1,6 @@
 package domain.impl;
 
 import java.util.ArrayDeque;
-import java.util.NoSuchElementException;
 
 import domain.api.SchedulingStrategy;
 

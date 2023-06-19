@@ -2,6 +2,7 @@ package application;
 
 import domain.impl.LongTermScheduler;
 import domain.impl.ShortTermScheduler;
+import domain.impl.ShortestJobFirst;
 import domain.impl.UserInterface;
 
 public class SchedulerSimulator {
@@ -10,7 +11,10 @@ public class SchedulerSimulator {
     private ShortTermScheduler shortTermScheduler;
 
     public SchedulerSimulator() {
-        shortTermScheduler = new ShortTermScheduler();
+        var schedulingStrategy = new ShortestJobFirst();
+        var quantumTimeMs = 200;
+
+        shortTermScheduler = new ShortTermScheduler(schedulingStrategy, quantumTimeMs);
         longTermScheduler = new LongTermScheduler();
         userInterface = new UserInterface();
 
