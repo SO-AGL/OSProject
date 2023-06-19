@@ -9,6 +9,8 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     private NotificationInterface notificationInterface;
     private SchedulingStrategy schedulingStrategy;
 
+    private boolean isRunning = false;
+
     public ShortTermScheduler(SchedulingStrategy schedulingStrategy, int quantumSizeMs) {
         this.schedulingStrategy = schedulingStrategy;
         this.schedulingStrategy.setQuantumSizeMs(quantumSizeMs);
@@ -30,25 +32,23 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
 
     @Override
     public void startSimulation() {
+        isRunning = true;
         start();
     }
 
     @Override
     public void suspendSimulation() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'suspendSimulation'");
+        isRunning = false;
     }
 
     @Override
     public void resumeSimulation() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'resumeSimulation'");
+        isRunning = true;
     }
 
     @Override
     public void stopSimulation() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'stopSimulation'");
+       interrupt();
     }
 
     @Override
@@ -74,6 +74,13 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
 
     public void run() {
         while (true) {
+
+            //Check interrupt
+            if (isInterrupted()) {break;}
+
+            //Check if simulation is running
+            if (!isRunning) {continue;}
+
             schedulingStrategy.execute();
             displayProcessQueues();
         }
