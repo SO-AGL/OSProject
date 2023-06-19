@@ -18,8 +18,9 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
     @Override
     public boolean submitJob(String fileName) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'submitJob'");
+        var newProcess = new Process("../data/" + fileName);
+        interSchedulerInterface.addProcess(newProcess);
+        return true;
     }
 
     @Override

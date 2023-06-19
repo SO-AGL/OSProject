@@ -19,6 +19,18 @@ public class Process {
     private int lineNumber = 0;
     private int blockedFor = 0;
 
+    public Process(String filePath) throws IllegalArgumentException {
+        try {
+            rawContent = Files.readString(Paths.get(filePath), StandardCharsets.UTF_8).replaceAll("\r", "");
+
+            setHeader();
+            setBody();
+            makeTimeEstimate();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String getName() {
         return name;
     }
@@ -51,15 +63,9 @@ public class Process {
         this.remainingTime = remainingTime;
     }
 
-    public Process(String filePath) throws IllegalArgumentException {
-        try {
-            rawContent = Files.readString(Paths.get(filePath), StandardCharsets.UTF_8).replaceAll("\r", "");
-
-            setHeader();
-            setBody();
-            makeTimeEstimate();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void decrementBlockedTime() {
+        if (blockedFor > 0) {
+            blockedFor--;
         }
     }
 

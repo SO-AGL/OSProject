@@ -17,7 +17,7 @@ public class UserInterface extends Thread implements NotificationInterface {
     private JTextArea infoDisplayText;
 
     public UserInterface() {
-        createFrame();
+        createFrame(); // Creates Notifiication window to display thread notifications
     }
 
     public void setControlInterface(ControlInterface controlInterface) {
@@ -43,6 +43,7 @@ public class UserInterface extends Thread implements NotificationInterface {
     public void run() {
         int option; // User selected option
         var scan = new Scanner(System.in); // Scanner object for the user input
+        String fileName; // User selected file to submit
 
         displayWelcomeMessage();
         do {
@@ -67,8 +68,13 @@ public class UserInterface extends Thread implements NotificationInterface {
                         controlInterface.stopSimulation();
                         break;
                     case 5:
-                        System.out.println("Processes queues:");
+                        System.out.println("Processes queues displayed in notifications window");
                         controlInterface.displayProcessQueues();
+                        break;
+                    case 6:
+                        System.out.print("Type the name of the file: ");
+                        fileName = scan.nextLine();
+                        submissionInterface.submitJob(fileName);
                         break;
                     default:
                         System.out.println("Invalid option");
@@ -96,6 +102,8 @@ public class UserInterface extends Thread implements NotificationInterface {
         System.out.println("\t(3) Resume simulation");
         System.out.println("\t(4) Stop simulation");
         System.out.println("\t(5) Display processes queues");
+        System.out.println("- Submission options:");
+        System.out.println("\t(6) Submit job");
         System.out.print("Option: ");
     }
 
