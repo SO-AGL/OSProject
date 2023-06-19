@@ -8,15 +8,22 @@ import domain.api.SubmissionInterface;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class UserInterface extends Thread implements NotificationInterface {
+    
     private ControlInterface controlInterface;
     private SubmissionInterface submissionInterface;
 
-    private JTextArea infoDisplayText;
+    private JFrame frame;
+    private JTextArea textArea_output;
+    private JTextArea textArea_menu;
+    private JTextField textArea_input;
+
+    private boolean enterClick = false;
 
     public UserInterface() {
-        createFrame(); // Creates Notifiication window to display thread notifications
+        createFrame(); // Creates Notification window to display thread notifications
     }
 
     public void setControlInterface(ControlInterface controlInterface) {
@@ -35,80 +42,132 @@ public class UserInterface extends Thread implements NotificationInterface {
      */
     @Override
     public void display(String info) {
-        infoDisplayText.append("INFO: " + info + "\n"); // Appends new text info in the display component
-        infoDisplayText.setCaretPosition(infoDisplayText.getDocument().getLength()); // Scroll to bottom
+        textArea_output.append("INFO: " + info + "\n\n"); // Appends new text info in the display component
+        textArea_output.setCaretPosition(textArea_output.getDocument().getLength()); // Scroll to bottom
+    }
+
+    public void displayInMenu(String menu) {
+        textArea_menu.append(menu + "\n"); // Appends new text info in the display component
+        textArea_menu.setCaretPosition(textArea_menu.getDocument().getLength()); // Scroll to bottom
+    }
+
+    public String getInput() {
+        enterClick = false;
+
+        while(!enterClick) {
+            try {
+                Thread.sleep(10);
+            } 
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String input = textArea_input.getText();
+        textArea_input.setText("");
+
+        displayInMenu(input);
+
+        return input;
     }
 
     public void run() {
-        int option; // User selected option
-        var scan = new Scanner(System.in); // Scanner object for the user input
-        String fileName; // User selected file to submit
+        int option = 0; // User selected option
+        String fileName = ""; // User selected file to submit
 
         displayWelcomeMessage();
+
         do {
+
             try {
-                displayMenu();
-                option = Integer.parseInt(scan.nextLine()); // Getting the user option
+
+                showMenu();
+                option = Integer.parseInt(getInput());
+
                 switch (option) {
                     case 1:
-                        System.out.println("Starting simulation");
+                        displayInMenu("Starting simulation");
                         controlInterface.startSimulation();
                         break;
                     case 2:
-                        System.out.println("Suspending simulation");
+                        displayInMenu("Suspending simulation");
                         controlInterface.suspendSimulation();
                         break;
                     case 3:
-                        System.out.println("Resuming simulation");
+                        displayInMenu("Resuming simulation");
                         controlInterface.resumeSimulation();
                         break;
                     case 4:
-                        System.out.println("Stopping simulation");
+                        displayInMenu("Stopping simulation");
                         controlInterface.stopSimulation();
                         break;
                     case 5:
-                        System.out.println("Processes queues displayed in notifications window");
+                        displayInMenu("Processes queues displayed in notifications window");
                         controlInterface.displayProcessQueues();
                         break;
                     case 6:
-                        System.out.print("Type the name of the file: ");
-                        fileName = scan.nextLine();
+                        displayInMenu("Type the name of the file: ");
+                        fileName = getInput();
                         submissionInterface.submitJob(fileName);
                         break;
                     default:
-                        System.out.println("Invalid option");
+                        displayInMenu("Invalid option");
                         break;
                 }
+
             } catch (Exception e) {
                 option = 0;
+
+                displayInMenu("Error!");
                 System.err.println(e);
             }
+
         } while (option != 4);
 
-        scan.close();
+        displayInMenu("\nHalting... Bye bye!");
+        System.out.println("\nHalting... Bye bye!");
+
+        try{
+            Thread.sleep(2000);
+        } 
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        frame.dispose();
+        System.exit(0);
+        
     }
 
     private void displayWelcomeMessage() {
-        System.out.println("Welcome to the SchedulerSimulator!");
+        displayInMenu("Welcome to the Scheduler Simulator!");
+        System.out.println("Welcome to the Scheduler Simulator!");
     }
 
-    private void displayMenu() {
-        System.out.println("================================");
-        System.out.println("Select one of the options below:");
-        System.out.println("- Control options:");
-        System.out.println("\t(1) Start simulation");
-        System.out.println("\t(2) Suspend simulation");
-        System.out.println("\t(3) Resume simulation");
-        System.out.println("\t(4) Stop simulation");
-        System.out.println("\t(5) Display processes queues");
-        System.out.println("- Submission options:");
-        System.out.println("\t(6) Submit job");
-        System.out.print("Option: ");
+    private void showMenu() {
+
+        String menuString = """
+        \n===============================================
+        Select one of the options below:
+
+        - Control options:
+        \t(1) Start simulation
+        \t(2) Suspend simulation
+        \t(3) Resume simulation
+        \t(4) Stop simulation (halts)
+        \t(5) Display processes queues
+
+        - Submission options
+        \t(6) Submit job
+        ===============================================\n""";
+
+        displayInMenu(menuString);
+
     }
 
     private void createFrame() {
 
-        var frame = new JFrame();
+        frame = new JFrame("Scheduler Simulator");
         var panel = new JPanel();
 
         var panel_output = new JPanel();
@@ -121,9 +180,9 @@ public class UserInterface extends Thread implements NotificationInterface {
         var scrollPane_output = new JScrollPane();
         var scrollPane_menu = new JScrollPane();
 
-        var textArea_output = new JTextArea(10, 30);
-        var textArea_menu = new JTextArea(10, 30);
-        var textArea_input = new JTextField(30);
+        textArea_output = new JTextArea(10, 30);
+        textArea_menu = new JTextArea(10, 30);
+        textArea_input = new JTextField(30);
 
         var label_output = new JLabel("Simulation output", SwingConstants.CENTER);
         var label_menu = new JLabel("Menu", SwingConstants.CENTER);
@@ -165,6 +224,12 @@ public class UserInterface extends Thread implements NotificationInterface {
         panel.add(panel_menu);
         panel.add(panel_input);
         panel.add(label_input_instruct);
+
+        textArea_input.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                enterClick = true;
+            }
+        });
 
         frame.getContentPane().add(panel);
         frame.pack();
