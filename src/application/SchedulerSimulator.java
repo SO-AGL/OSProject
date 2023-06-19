@@ -5,10 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import domain.impl.LongTermScheduler;
-import domain.impl.ShortTermScheduler;
-import domain.impl.ShortestJobFirst;
-import domain.impl.UserInterface;
 import domain.impl.Process;
+import domain.impl.RoundRobin;
+import domain.impl.ShortTermScheduler;
+import domain.impl.UserInterface;
 
 public class SchedulerSimulator extends Thread {
     private UserInterface userInterface;
@@ -16,7 +16,7 @@ public class SchedulerSimulator extends Thread {
     private ShortTermScheduler shortTermScheduler;
 
     public SchedulerSimulator() {
-        var schedulingStrategy = new ShortestJobFirst();
+        var schedulingStrategy = new RoundRobin();
         var quantumTimeMs = 200;
 
         shortTermScheduler = new ShortTermScheduler(schedulingStrategy, quantumTimeMs);
