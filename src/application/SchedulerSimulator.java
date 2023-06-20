@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import domain.api.SchedulingStrategy;
 import domain.impl.LongTermScheduler;
 import domain.impl.Process;
-import domain.impl.RoundRobin;
 import domain.impl.ShortTermScheduler;
 import domain.impl.UserInterface;
 
@@ -15,8 +15,7 @@ public class SchedulerSimulator extends Thread {
     private LongTermScheduler longTermScheduler;
     private ShortTermScheduler shortTermScheduler;
 
-    public SchedulerSimulator(int maxProcessReadySize) {
-        var schedulingStrategy = new RoundRobin();
+    public SchedulerSimulator(int maxProcessReadySize, SchedulingStrategy schedulingStrategy) {
         var quantumTimeMs = 200;
 
         shortTermScheduler = new ShortTermScheduler(schedulingStrategy, quantumTimeMs);
