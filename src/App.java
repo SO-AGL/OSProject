@@ -55,6 +55,6 @@ public class App {
         }
 
         var schedulerSimulator = new SchedulerSimulator(maxProcessReadySize, strategy);
-        schedulerSimulator.start();
+        //DONT CALL schedulerSimulator.start(), IT WILL BE CALLED BY THE CONSTRUCTOR
     }
 }

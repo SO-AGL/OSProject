@@ -157,7 +157,7 @@ public class UserInterface extends Thread implements NotificationInterface {
         \t(1) Start simulation
         \t(2) Suspend simulation
         \t(3) Resume simulation
-        \t(4) Stop simulation (halts)
+        \t(4) Stop simulation
         \t(5) Display processes queues
         \t(6) Exit
 

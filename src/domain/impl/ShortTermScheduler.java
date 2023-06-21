@@ -81,6 +81,8 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
             //Check if simulation is running
             if (!isRunning) {continue;}
 
+            System.out.println("Executing scheduling strategy");
+
             schedulingStrategy.execute();
             displayProcessQueues();
         }
