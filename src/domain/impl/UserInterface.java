@@ -1,5 +1,6 @@
 package domain.impl;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -24,9 +25,10 @@ public class UserInterface extends Thread implements NotificationInterface {
     private JPanel buttonsPanel = new JPanel();
     private JPanel jobPanel = new JPanel();
     private JButton startButton = new JButton("Start");
-    private JButton suspendButton = new JButton("Suspend");
     private JButton resumeButton = new JButton("Resume");
+    private JButton suspendButton = new JButton("Suspend");
     private JButton stopButton = new JButton("Stop");
+    private JButton showQueuesButton = new JButton("Show Queues");
     private JButton submitJobButton = new JButton("Submit Job");
     private JTextField jobTextField = new JTextField(20);
     private JTextArea reportTextArea = new JTextArea(200, 30);
@@ -34,8 +36,8 @@ public class UserInterface extends Thread implements NotificationInterface {
 
     public UserInterface() {
         startButton.setEnabled(true);
-        suspendButton.setEnabled(false);
         resumeButton.setEnabled(false);
+        suspendButton.setEnabled(false);
         stopButton.setEnabled(false);
 
         startButton.addActionListener(new ActionListener() {
@@ -49,16 +51,6 @@ public class UserInterface extends Thread implements NotificationInterface {
             }
         });
 
-        suspendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controlInterface.suspendSimulation();
-
-                suspendButton.setEnabled(false);
-                resumeButton.setEnabled(true);
-            }
-        });
-
         resumeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -66,6 +58,16 @@ public class UserInterface extends Thread implements NotificationInterface {
 
                 suspendButton.setEnabled(true);
                 resumeButton.setEnabled(false);
+            }
+        });
+
+        suspendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controlInterface.suspendSimulation();
+
+                suspendButton.setEnabled(false);
+                resumeButton.setEnabled(true);
             }
         });
 
@@ -77,6 +79,14 @@ public class UserInterface extends Thread implements NotificationInterface {
                 startButton.setEnabled(true);
                 suspendButton.setEnabled(false);
                 resumeButton.setEnabled(false);
+            }
+        });
+
+        showQueuesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                submissionInterface.displaySubmissionQueue();
+                controlInterface.displayProcessQueues();
             }
         });
 
@@ -98,9 +108,10 @@ public class UserInterface extends Thread implements NotificationInterface {
         reportScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         buttonsPanel.add(startButton);
-        buttonsPanel.add(suspendButton);
         buttonsPanel.add(resumeButton);
+        buttonsPanel.add(suspendButton);
         buttonsPanel.add(stopButton);
+        buttonsPanel.add(showQueuesButton);
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
 
         jobPanel.setLayout(new BoxLayout(jobPanel, BoxLayout.X_AXIS));
@@ -111,13 +122,14 @@ public class UserInterface extends Thread implements NotificationInterface {
         basePanel.add(jobPanel);
         basePanel.add(reportScrollPane);
 
-        basePanel.setBounds(10, 10, 380, 380);
+        basePanel.setPreferredSize(new Dimension(400, 600));
         basePanel.setLayout(new BoxLayout(basePanel, BoxLayout.Y_AXIS));
 
         frame.add(basePanel);
 
-        frame.setSize(420, 420);
+        frame.pack();
         frame.setLayout(null);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
