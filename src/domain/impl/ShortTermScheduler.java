@@ -96,7 +96,10 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
             }
 
             schedulingStrategy.execute();
-            displayProcessQueues();
+
+            if (getProcessLoad() > 0) {
+                displayProcessQueues();
+            }
         }
 
     }

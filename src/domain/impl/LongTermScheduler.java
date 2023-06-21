@@ -4,6 +4,8 @@ import domain.api.InterSchedulerInterface;
 import domain.api.NotificationInterface;
 import domain.api.SubmissionInterface;
 
+import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.*;
 
 public class LongTermScheduler extends Thread implements SubmissionInterface {
@@ -29,27 +31,29 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
     @Override
     public boolean submitJob(String fileName) {
-        
-        var newProcess = new Process("../data/" + fileName); 
+        try {
+            var newProcess = new Process("../data/" + fileName);
 
-        if(newProcess.getName() == null){
-            notificationInterface.display("LongTermScheduler:\nFile not found.");
+            if (submissionQueue.size() >= MAX_SUBMISSION_QUEUE_SIZE) {
+                notificationInterface.display("LongTermScheduler:\nFull submission queue.");
+                return false;
+            }
+
+            submissionQueue.add(newProcess);
+            displaySubmissionQueue();
+            
+            return true;
+        } catch (IOException e) {
+            if (e instanceof NoSuchFileException) {
+                notificationInterface.display("LongTermScheduler:\nFile not found.");
+            }
             return false;
         }
-
-        if (submissionQueue.size() >= MAX_SUBMISSION_QUEUE_SIZE) {
-            notificationInterface.display("LongTermScheduler:\nFull submission queue.");
-            return false;
-        }
-
-        submissionQueue.add(newProcess);
-        displaySubmissionQueue();
-        return true;
     }
 
     @Override
     public void displaySubmissionQueue() {
-        
+
         String output = "LongTermScheduler:\nSubmission Queue: ";
 
         for (var process : submissionQueue) {
@@ -65,7 +69,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
     public void run() {
         // TODO Auto-generated method stub
 
-        while(true) {
+        while (true) {
 
             if (submissionQueue.size() > 0) {
 
@@ -75,7 +79,8 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
                     interSchedulerInterface.addProcess(newProcess);
 
-                    notificationInterface.display("LongTermScheduler:\nProcess " + newProcess.getName() + " added to the ready queue.");
+                    notificationInterface.display(
+                            "LongTermScheduler:\nProcess " + newProcess.getName() + " added to the ready queue.");
                 }
 
             }
@@ -88,9 +93,6 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
         }
 
-
     }
-
-
 
 }

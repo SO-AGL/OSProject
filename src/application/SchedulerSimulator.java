@@ -1,22 +1,17 @@
 package application;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import domain.api.SchedulingStrategy;
 import domain.impl.LongTermScheduler;
-import domain.impl.Process;
 import domain.impl.ShortTermScheduler;
 import domain.impl.UserInterface;
 
-public class SchedulerSimulator extends Thread {
+public class SchedulerSimulator {
     private UserInterface userInterface;
     private LongTermScheduler longTermScheduler;
     private ShortTermScheduler shortTermScheduler;
 
     public SchedulerSimulator(int maxProcessReadySize, SchedulingStrategy schedulingStrategy) {
-        var quantumTimeMs = 200;
+        int quantumTimeMs = 200;
 
         shortTermScheduler = new ShortTermScheduler(schedulingStrategy, quantumTimeMs);
         longTermScheduler = new LongTermScheduler(maxProcessReadySize);
@@ -28,27 +23,6 @@ public class SchedulerSimulator extends Thread {
         userInterface.setControlInterface(shortTermScheduler);
         userInterface.setSubmissionInterface(longTermScheduler);
 
-        start();
-    }
-
-    @Override
-    public void run() {
-        var process = new Process("data/teste2.txt");
-        shortTermScheduler.addProcess(process);
-
-        try {
-            Files.walk(Paths.get("data/processes"))
-                .filter(Files::isRegularFile)
-                .forEach(file -> shortTermScheduler.addProcess(new Process(file.toString())));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        shortTermScheduler.startSimulation();
-    }
-
-    public void start() {
         longTermScheduler.start();
         userInterface.start();
     }

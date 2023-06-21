@@ -54,7 +54,6 @@ public class App {
             strategy = new ShortestJobFirst();
         }
 
-        var schedulerSimulator = new SchedulerSimulator(maxProcessReadySize, strategy);
-        //DONT CALL schedulerSimulator.start(), IT WILL BE CALLED BY THE CONSTRUCTOR
+        new SchedulerSimulator(maxProcessReadySize, strategy);
     }
 }
