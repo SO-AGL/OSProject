@@ -10,7 +10,6 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     private SchedulingStrategy schedulingStrategy;
 
     private boolean isRunning = false;
-    private boolean isInterrupted = false;
 
     public ShortTermScheduler(SchedulingStrategy schedulingStrategy, int quantumSizeMs) {
         this.schedulingStrategy = schedulingStrategy;
@@ -34,6 +33,7 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     @Override
     public void startSimulation() {
         isRunning = true;
+
         if(!this.isAlive()) {this.start();}
 
         notificationInterface.display("Simulation started!");
@@ -56,7 +56,7 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     @Override
     public void stopSimulation() {
         isRunning = false;
-        isInterrupted = true;
+        restart();
 
         notificationInterface.display("Simulation stopped!\nAll processes were removed from the queues.");
     }
@@ -83,13 +83,17 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     }
 
     public void run() {
+
         while (true) {
 
-            //Check interrupt
-            if (isInterrupted) {restart();}
-
             //Check if simulation is running
-            if (!isRunning) {continue;}
+            if (!isRunning) {
+            
+                //This is important to avoid the CPU to be 100% used DONT REMOVE IT
+                try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
+
+                continue;
+            }
 
             schedulingStrategy.execute();
             displayProcessQueues();
@@ -102,7 +106,7 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         schedulingStrategy.blocked.clear();
         schedulingStrategy.finished.clear();
 
-        isInterrupted = false;
+        return;
     }
 
 }
