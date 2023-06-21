@@ -38,18 +38,4 @@ public class RoundRobin extends SchedulingStrategy {
 
         } catch (NoSuchElementException e) { }
     }
-
-    /**
-     * Decrements the blocked time of each process in blocked queue. If a process reaches block time of zero,
-     * it is removed from the blocked queue and added to the ready queue.
-     */
-    private void decrementBlockedTimes() {
-        for (var blockedProcess : blocked) {
-            blockedProcess.decrementBlockedTime();
-            if (blockedProcess.getBlockedFor() == 0) {
-                blocked.remove(blockedProcess);
-                ready.add(blockedProcess);
-            }
-        }
-    }
 }

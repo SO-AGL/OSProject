@@ -15,4 +15,14 @@ public abstract class SchedulingStrategy {
     public void setQuantumSizeMs(int size) {
         quantumSizeMs = size;
     }
+
+    protected void decrementBlockedTimes() {
+        for (var blockedProcess : blocked) {
+            blockedProcess.decrementBlockedTime();
+            if (blockedProcess.getBlockedFor() == 0) {
+                blocked.remove(blockedProcess);
+                ready.add(blockedProcess);
+            }
+        }
+    }
 }
