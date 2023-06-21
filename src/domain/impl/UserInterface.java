@@ -106,6 +106,9 @@ public class UserInterface extends Thread implements NotificationInterface {
                         controlInterface.displayProcessQueues();
                         break;
                     case 6:
+                        displayInMenu("Exiting");
+                        break;
+                    case 7:
                         displayInMenu("Type the name of the file: ");
                         fileName = getInput();
                         submissionInterface.submitJob(fileName);
@@ -122,7 +125,7 @@ public class UserInterface extends Thread implements NotificationInterface {
                 System.err.println(e);
             }
 
-        } while (option != 4);
+        } while (option != 6);
 
         displayInMenu("\nHalting... Bye bye!");
         System.out.println("\nHalting... Bye bye!");
@@ -156,9 +159,10 @@ public class UserInterface extends Thread implements NotificationInterface {
         \t(3) Resume simulation
         \t(4) Stop simulation (halts)
         \t(5) Display processes queues
+        \t(6) Exit
 
         - Submission options
-        \t(6) Submit job
+        \t(7) Submit job
         ===============================================\n""";
 
         displayInMenu(menuString);
