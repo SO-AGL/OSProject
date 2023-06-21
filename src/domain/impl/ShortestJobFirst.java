@@ -8,16 +8,13 @@ import domain.api.SchedulingStrategy;
 public class ShortestJobFirst extends SchedulingStrategy {
     public ShortestJobFirst() {
         ready = new PriorityQueue<>(10,
-            (x, y) -> Integer.valueOf(x.getRemainingTime()).compareTo(y.getRemainingTime()));
+                (x, y) -> Integer.valueOf(x.getRemainingTime()).compareTo(y.getRemainingTime()));
         blocked = new PriorityQueue<>(10,
-            (x, y) -> Integer.valueOf(x.getBlockedFor()).compareTo(y.getBlockedFor()));
+                (x, y) -> Integer.valueOf(x.getBlockedFor()).compareTo(y.getBlockedFor()));
     }
-
-    private int quantumSizeMs = 0;
 
     @Override
     public void execute() {
-        
         try {
             var process = ready.remove();
 
@@ -26,6 +23,7 @@ public class ShortestJobFirst extends SchedulingStrategy {
 
                 try {
                     Thread.sleep(quantumSizeMs);
+                    decrementBlockedTimes();
 
                     if (line.getBlockFor() > 0) {
                         process.setBlockedFor(line.getBlockFor());
@@ -42,9 +40,10 @@ public class ShortestJobFirst extends SchedulingStrategy {
             }
 
         } catch (NoSuchElementException e) {
-            
+
             try {
                 Thread.sleep(quantumSizeMs);
+                decrementBlockedTimes();
                 return;
             } catch (InterruptedException ie) {
                 return;
@@ -52,11 +51,6 @@ public class ShortestJobFirst extends SchedulingStrategy {
 
         }
 
-    }
-
-    @Override
-    public void setQuantumSizeMs(int size) {
-        quantumSizeMs = size;
     }
 
 }
