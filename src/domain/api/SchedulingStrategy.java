@@ -1,6 +1,7 @@
 package domain.api;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Queue;
 
 public abstract class SchedulingStrategy {
@@ -17,12 +18,15 @@ public abstract class SchedulingStrategy {
     }
 
     protected void decrementBlockedTimes() {
+        var toRemove = new ArrayList<>();
         for (var blockedProcess : blocked) {
             blockedProcess.decrementBlockedTime();
             if (blockedProcess.getBlockedFor() == 0) {
-                blocked.remove(blockedProcess);
                 ready.add(blockedProcess);
+                toRemove.add(blockedProcess);
             }
         }
+
+        blocked.removeAll(toRemove);
     }
 }

@@ -67,8 +67,6 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
     }
 
     public void run() {
-        // TODO Auto-generated method stub
-
         while (true) {
 
             if (submissionQueue.size() > 0) {

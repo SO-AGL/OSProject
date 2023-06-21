@@ -1,5 +1,7 @@
 package domain.impl;
 
+import java.util.stream.Collectors;
+
 import domain.api.ControlInterface;
 import domain.api.InterSchedulerInterface;
 import domain.api.NotificationInterface;
@@ -68,15 +70,12 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         var blockedQueue = "blocked: ";
         var finishedQueue = "finished: ";
 
-        for (var process : schedulingStrategy.ready) {
-            readyQueue += process.getName() + ", ";
-        }
-        for (var process : schedulingStrategy.blocked) {
-            blockedQueue += process.getName() + ", ";
-        }
-        for (var process : schedulingStrategy.finished) {
-            finishedQueue += process.getName() + ", ";
-        }
+        var readyNames = schedulingStrategy.ready.stream().map(p -> p.getName()).collect(Collectors.toList());
+        readyQueue += String.join(", ", readyNames);
+        var blockedNames = schedulingStrategy.blocked.stream().map(p -> p.getName()).collect(Collectors.toList());
+        blockedQueue += String.join(", ", blockedNames);
+        var finishedNames = schedulingStrategy.finished.stream().map(p -> p.getName()).collect(Collectors.toList());
+        finishedQueue += String.join(", ", finishedNames);
 
         processQueues = String.join("\n", readyQueue, blockedQueue, finishedQueue);
         notificationInterface.display("Process queues:\n" + processQueues);
