@@ -30,8 +30,9 @@ public class UserInterface extends Thread implements NotificationInterface {
     private JButton stopButton = new JButton("Stop");
     private JButton showQueuesButton = new JButton("Show Queues");
     private JButton submitJobButton = new JButton("Submit Job");
+    private JButton clearButton = new JButton("Clear output");
     private JTextField jobTextField = new JTextField(20);
-    private JTextArea reportTextArea = new JTextArea(200, 30);
+    private JTextArea reportTextArea = new JTextArea(34, 30);
     private JScrollPane reportScrollPane = new JScrollPane(reportTextArea);
 
     public UserInterface() {
@@ -79,6 +80,7 @@ public class UserInterface extends Thread implements NotificationInterface {
                 startButton.setEnabled(true);
                 suspendButton.setEnabled(false);
                 resumeButton.setEnabled(false);
+                stopButton.setEnabled(false);
             }
         });
 
@@ -94,6 +96,13 @@ public class UserInterface extends Thread implements NotificationInterface {
             @Override
             public void actionPerformed(ActionEvent e) {
                 submitJob();
+            }
+        });
+
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                reportTextArea.setText("");;
             }
         });
 
@@ -117,6 +126,7 @@ public class UserInterface extends Thread implements NotificationInterface {
         jobPanel.setLayout(new BoxLayout(jobPanel, BoxLayout.X_AXIS));
         jobPanel.add(jobTextField);
         jobPanel.add(submitJobButton);
+        jobPanel.add(clearButton);
 
         basePanel.add(buttonsPanel);
         basePanel.add(jobPanel);

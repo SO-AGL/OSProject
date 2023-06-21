@@ -38,21 +38,21 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
 
         if(!this.isAlive()) {this.start();}
 
-        notificationInterface.display("Simulation started!");
+        notificationInterface.display("Simulation started!\n");
     }
 
     @Override
     public void suspendSimulation() {
         isRunning = false;
 
-        notificationInterface.display("Simulation suspended!");
+        notificationInterface.display("Simulation suspended!\n");
     }
 
     @Override
     public void resumeSimulation() {
         isRunning = true;
 
-        notificationInterface.display("Simulation resumed!");
+        notificationInterface.display("Simulation resumed!\n");
     }
 
     @Override
@@ -60,15 +60,15 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         isRunning = false;
         restart();
 
-        notificationInterface.display("Simulation stopped!\nAll processes were removed from the queues.");
+        notificationInterface.display("Simulation stopped!\nAll processes were removed from the queues.\n");
     }
 
     @Override
     public void displayProcessQueues() {
         String processQueues;
-        var readyQueue = "ready: ";
-        var blockedQueue = "blocked: ";
-        var finishedQueue = "finished: ";
+        var readyQueue = "- Ready: ";
+        var blockedQueue = "- Blocked: ";
+        var finishedQueue = "- Finished: ";
 
         var readyNames = schedulingStrategy.ready.stream().map(p -> p.getName()).collect(Collectors.toList());
         readyQueue += String.join(", ", readyNames);
@@ -78,7 +78,7 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         finishedQueue += String.join(", ", finishedNames);
 
         processQueues = String.join("\n", readyQueue, blockedQueue, finishedQueue);
-        notificationInterface.display("Process queues:\n" + processQueues);
+        notificationInterface.display("Short Term scheduler:\nProcess queues:\n" + processQueues + "\n");
     }
 
     public void run() {

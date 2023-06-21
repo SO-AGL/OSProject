@@ -15,10 +15,10 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
     private List<Process> submissionQueue = new ArrayList<Process>();
     private int MAX_SUBMISSION_QUEUE_SIZE = 10000;
     private int MAX_PROCESS_OPEN_SIZE = 0;
-    private int VERIFY_INTERVAL_MS = 1000;
+    private int VERIFY_INTERVAL_MS = 100;
 
     public LongTermScheduler(int maxProcessOpenSize) {
-        this.MAX_PROCESS_OPEN_SIZE = maxProcessOpenSize;
+        MAX_PROCESS_OPEN_SIZE = maxProcessOpenSize;
     }
 
     public void setInterSchedulerInterface(InterSchedulerInterface interSchedulerInterface) {
@@ -35,7 +35,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
             var newProcess = new Process(fileName);
 
             if (submissionQueue.size() >= MAX_SUBMISSION_QUEUE_SIZE) {
-                notificationInterface.display("LongTermScheduler:\nFull submission queue.");
+                notificationInterface.display("LongTermScheduler:\nFull submission queue.\n");
                 return false;
             }
 
@@ -45,7 +45,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
             return true;
         } catch (IOException e) {
             if (e instanceof NoSuchFileException) {
-                notificationInterface.display("LongTermScheduler:\nFile not found.");
+                notificationInterface.display("LongTermScheduler:\nFile not found.\n");
             }
             return false;
         }
@@ -60,7 +60,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
             output += process.getName() + " ";
         }
 
-        notificationInterface.display(output);
+        notificationInterface.display(output + "\n");
 
         return;
 
@@ -78,7 +78,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
                     interSchedulerInterface.addProcess(newProcess);
 
                     notificationInterface.display(
-                            "LongTermScheduler:\nProcess " + newProcess.getName() + " added to the ready queue.");
+                            "LongTermScheduler:\nProcess " + newProcess.getName() + " added to the ready queue.\n");
                 }
 
             }
@@ -86,7 +86,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
             try {
                 Thread.sleep(VERIFY_INTERVAL_MS);
             } catch (InterruptedException e) {
-                notificationInterface.display("LongTermScheduler:\nLong Term Scheduler interrupted.");
+                notificationInterface.display("LongTermScheduler:\nLong Term Scheduler interrupted.\n");
             }
 
         }
