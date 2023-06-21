@@ -17,38 +17,41 @@ public class ShortestJobFirst extends SchedulingStrategy {
 
     @Override
     public void execute() {
-        while (true) {
-            try {
-                var process = ready.remove();
+        
+        try {
+            var process = ready.remove();
 
-                while (process.hasNextLine()) {
-                    var line = process.getNextLine();
+            while (process.hasNextLine()) {
+                var line = process.getNextLine();
 
-                    try {
-                        Thread.sleep(quantumSizeMs);
-
-                        if (line.getBlockFor() > 0) {
-                            process.setBlockedFor(line.getBlockFor());
-                            blocked.add(process);
-                            break;
-                        }
-                    } catch (InterruptedException ie) {
-                        break;
-                    }
-                }
-
-                if (!process.hasNextLine() && process.getBlockedFor() == 0) {
-                    finished.add(process);
-                }
-
-            } catch (NoSuchElementException e) {
                 try {
-                    wait();
+                    Thread.sleep(quantumSizeMs);
+
+                    if (line.getBlockFor() > 0) {
+                        process.setBlockedFor(line.getBlockFor());
+                        blocked.add(process);
+                        return;
+                    }
                 } catch (InterruptedException ie) {
-                    break;
+                    return;
                 }
             }
+
+            if (!process.hasNextLine() && process.getBlockedFor() == 0) {
+                finished.add(process);
+            }
+
+        } catch (NoSuchElementException e) {
+            
+            try {
+                Thread.sleep(quantumSizeMs);
+                return;
+            } catch (InterruptedException ie) {
+                return;
+            }
+
         }
+
     }
 
     @Override

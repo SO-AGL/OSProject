@@ -33,22 +33,32 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     @Override
     public void startSimulation() {
         isRunning = true;
-        start();
+
+        if(!this.isAlive()) {this.start();}
+
+        notificationInterface.display("Simulation started!");
     }
 
     @Override
     public void suspendSimulation() {
         isRunning = false;
+
+        notificationInterface.display("Simulation suspended!");
     }
 
     @Override
     public void resumeSimulation() {
         isRunning = true;
+
+        notificationInterface.display("Simulation resumed!");
     }
 
     @Override
     public void stopSimulation() {
-       interrupt();
+        isRunning = false;
+        restart();
+
+        notificationInterface.display("Simulation stopped!\nAll processes were removed from the queues.");
     }
 
     @Override
@@ -73,16 +83,30 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     }
 
     public void run() {
+
         while (true) {
 
-            //Check interrupt
-            if (isInterrupted()) {break;}
-
             //Check if simulation is running
-            if (!isRunning) {continue;}
+            if (!isRunning) {
+            
+                //This is important to avoid the CPU to be 100% used DONT REMOVE IT
+                try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
+
+                continue;
+            }
 
             schedulingStrategy.execute();
             displayProcessQueues();
         }
+
     }
+
+    private void restart() {
+        schedulingStrategy.ready.clear();
+        schedulingStrategy.blocked.clear();
+        schedulingStrategy.finished.clear();
+
+        return;
+    }
+
 }
