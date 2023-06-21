@@ -32,7 +32,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
     @Override
     public boolean submitJob(String fileName) {
         try {
-            var newProcess = new Process("../data/" + fileName);
+            var newProcess = new Process(fileName);
 
             if (submissionQueue.size() >= MAX_SUBMISSION_QUEUE_SIZE) {
                 notificationInterface.display("LongTermScheduler:\nFull submission queue.");
