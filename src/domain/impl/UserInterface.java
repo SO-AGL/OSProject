@@ -1,14 +1,20 @@
 package domain.impl;
 
-import java.util.Scanner;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import domain.api.ControlInterface;
 import domain.api.NotificationInterface;
 import domain.api.SubmissionInterface;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class UserInterface extends Thread implements NotificationInterface {
     
@@ -64,6 +70,12 @@ public class UserInterface extends Thread implements NotificationInterface {
         }
 
         String input = textArea_input.getText();
+
+        // get input again if the user hits enter with an empty input
+        if (input.equals("")) {
+            return getInput();
+        }
+
         textArea_input.setText("");
 
         displayInMenu(input);
@@ -149,21 +161,19 @@ public class UserInterface extends Thread implements NotificationInterface {
 
     private void showMenu() {
 
-        String menuString = """
-        \n===============================================
-        Select one of the options below:
-
-        - Control options:
-        \t(1) Start simulation
-        \t(2) Suspend simulation
-        \t(3) Resume simulation
-        \t(4) Stop simulation
-        \t(5) Display processes queues
-        \t(6) Exit
-
-        - Submission options
-        \t(7) Submit job
-        ===============================================\n""";
+        String menuString = ""
+        .concat("\n==============================================")
+        .concat("\nSelect one of the options below:")
+        .concat("\n\n- Control options:")
+        .concat("\n\t(1) Start simulation")
+        .concat("\n\t(2) Suspend simulation")
+        .concat("\n\t(3) Resume simulation")
+        .concat("\n\t(4) Stop simulation")
+        .concat("\n\t(5) Display processes queues")
+        .concat("\n\t(6) Exit")
+        .concat("\n\n- Submission options")
+        .concat("\n\t(7) Submit job")
+        .concat("\n\n==============================================");
 
         displayInMenu(menuString);
 

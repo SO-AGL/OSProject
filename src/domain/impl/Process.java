@@ -3,6 +3,7 @@ package domain.impl;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +20,15 @@ public class Process {
     private int lineNumber = 0;
     private int blockedFor = 0;
 
-    public Process(String filePath) throws IllegalArgumentException {
+    public Process(String filePath) throws IOException, NoSuchFileException {
         try {
             rawContent = Files.readString(Paths.get(filePath), StandardCharsets.UTF_8).replaceAll("\r", "");
 
             setHeader();
             setBody();
             makeTimeEstimate();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw e;
         }
     }
 
