@@ -36,23 +36,25 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     public void startSimulation() {
         isRunning = true;
 
-        if(!this.isAlive()) {this.start();}
+        if (!isAlive()) {
+            start();
+        }
 
-        notificationInterface.display("Simulation started!");
+        notificationInterface.display("Simulation started!\n");
     }
 
     @Override
     public void suspendSimulation() {
         isRunning = false;
 
-        notificationInterface.display("Simulation suspended!");
+        notificationInterface.display("Simulation suspended!\n");
     }
 
     @Override
     public void resumeSimulation() {
         isRunning = true;
 
-        notificationInterface.display("Simulation resumed!");
+        notificationInterface.display("Simulation resumed!\n");
     }
 
     @Override
@@ -60,15 +62,15 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         isRunning = false;
         restart();
 
-        notificationInterface.display("Simulation stopped!\nAll processes were removed from the queues.");
+        notificationInterface.display("Simulation stopped!\nAll processes were removed from the queues.\n");
     }
 
     @Override
     public void displayProcessQueues() {
         String processQueues;
-        var readyQueue = "ready: ";
-        var blockedQueue = "blocked: ";
-        var finishedQueue = "finished: ";
+        var readyQueue = "- Ready: ";
+        var blockedQueue = "- Blocked: ";
+        var finishedQueue = "- Finished: ";
 
         var readyNames = schedulingStrategy.ready.stream().map(p -> p.getName()).collect(Collectors.toList());
         readyQueue += String.join(", ", readyNames);
@@ -78,29 +80,28 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         finishedQueue += String.join(", ", finishedNames);
 
         processQueues = String.join("\n", readyQueue, blockedQueue, finishedQueue);
-        notificationInterface.display("Process queues:\n" + processQueues);
+        notificationInterface.display("Short Term scheduler:\nProcess queues:\n" + processQueues + "\n");
     }
 
     public void run() {
-
         while (true) {
-
             //Check if simulation is running
             if (!isRunning) {
-            
                 //This is important to avoid the CPU to be 100% used DONT REMOVE IT
-                try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
-
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return;
+                }
                 continue;
             }
 
-            schedulingStrategy.execute();
-
             if (getProcessLoad() > 0) {
+                schedulingStrategy.execute();
                 displayProcessQueues();
             }
         }
-
     }
 
     private void restart() {
