@@ -36,7 +36,9 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     public void startSimulation() {
         isRunning = true;
 
-        if(!this.isAlive()) {this.start();}
+        if (!isAlive()) {
+            start();
+        }
 
         notificationInterface.display("Simulation started!\n");
     }
@@ -82,25 +84,24 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     }
 
     public void run() {
-
         while (true) {
-
             //Check if simulation is running
             if (!isRunning) {
-            
                 //This is important to avoid the CPU to be 100% used DONT REMOVE IT
-                try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
-
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return;
+                }
                 continue;
             }
 
-            schedulingStrategy.execute();
-
             if (getProcessLoad() > 0) {
+                schedulingStrategy.execute();
                 displayProcessQueues();
             }
         }
-
     }
 
     private void restart() {

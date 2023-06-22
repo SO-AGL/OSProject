@@ -155,10 +155,15 @@ public class UserInterface extends Thread implements NotificationInterface {
     @Override
     public void display(String info) {
         reportTextArea.append(info + "\n");
+        reportTextArea.setCaretPosition(reportTextArea.getDocument().getLength());
     }
 
     private void submitJob() {
-        var submitted = submissionInterface.submitJob(jobTextField.getText());
+        String input = jobTextField.getText();
+        if (input.equals("")) {
+            return;
+        }
+        var submitted = submissionInterface.submitJob(input);
         if (submitted) {
             jobTextField.setText("");
         }
