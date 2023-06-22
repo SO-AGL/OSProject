@@ -116,12 +116,12 @@ public class UserInterface extends Thread implements NotificationInterface {
         reportTextArea.setEditable(false);
         reportScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
         buttonsPanel.add(startButton);
         buttonsPanel.add(resumeButton);
         buttonsPanel.add(suspendButton);
         buttonsPanel.add(stopButton);
         buttonsPanel.add(showQueuesButton);
-        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
 
         jobPanel.setLayout(new BoxLayout(jobPanel, BoxLayout.X_AXIS));
         jobPanel.add(jobTextField);
@@ -132,16 +132,18 @@ public class UserInterface extends Thread implements NotificationInterface {
         basePanel.add(jobPanel);
         basePanel.add(reportScrollPane);
 
-        basePanel.setPreferredSize(new Dimension(400, 600));
+        basePanel.setPreferredSize(new Dimension(455, 580));
         basePanel.setLayout(new BoxLayout(basePanel, BoxLayout.Y_AXIS));
 
         frame.add(basePanel);
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
 
         frame.pack();
         frame.setLayout(null);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public void setControlInterface(ControlInterface controlInterface) {
