@@ -85,15 +85,17 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
 
     public void run() {
         while (true) {
+
+            //This is important to avoid the CPU to be 100% used DONT REMOVE IT
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return;
+            }
+
             //Check if simulation is running
             if (!isRunning) {
-                //This is important to avoid the CPU to be 100% used DONT REMOVE IT
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    return;
-                }
                 continue;
             }
 
