@@ -8,9 +8,13 @@ public abstract class SchedulingStrategy {
     public Queue<domain.impl.Process> ready;
     public Queue<domain.impl.Process> blocked;
     public Queue<domain.impl.Process> finished = new ArrayDeque<>();
-    public domain.impl.Process executing;
 
-    protected int quantumSizeMs; 
+    protected int quantumSizeMs;
+    protected NotificationInterface notificationInterface;
+
+    public void setNotificationInterface(NotificationInterface notificationInterface) {
+        this.notificationInterface = notificationInterface;
+    }
 
     public abstract void execute();
 

@@ -19,15 +19,16 @@ public class RoundRobin extends SchedulingStrategy {
                 var line = process.getNextLine();
 
                 try {
-                    executing = process;
+                    notificationInterface.display("RoundRobin: Executing: " + process.getName());
                     passQuantum();
-                    executing = null;
 
                     if (line.getBlockFor() > 0) {
                         process.setBlockedFor(line.getBlockFor());
                         blocked.add(process);
-                    } else {
+                    } else if (process.hasNextLine()) {
                         ready.add(process);
+                    } else {
+                        finished.add(process);
                     }
                 } catch (InterruptedException ie) { }
             } else {
