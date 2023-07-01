@@ -16,7 +16,6 @@ public class Process {
     private List<ProgramLine> body = new ArrayList<>();
     private String rawContent;
     private int timeEstimate;
-    private int remainingTime;
     private int lineNumber = 0;
     private int blockedFor = 0;
 
@@ -56,12 +55,8 @@ public class Process {
         return lineNumber < body.size();
     }
 
-    public int getRemainingTime() {
-        return remainingTime;
-    }
-
-    public void setRemainingTime(int remainingTime) {
-        this.remainingTime = remainingTime;
+    public int getTimeEstimate() {
+        return timeEstimate;
     }
 
     public void decrementBlockedTime() {
@@ -102,8 +97,6 @@ public class Process {
         for (var line : body) {
             timeEstimate += line.getTimeEstimate();
         }
-
-        remainingTime = timeEstimate;
     }
 
     @Override
