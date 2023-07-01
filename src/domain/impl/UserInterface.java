@@ -35,7 +35,8 @@ public class UserInterface extends Thread implements NotificationInterface {
     private JTextArea reportTextArea = new JTextArea(34, 30);
     private JScrollPane reportScrollPane = new JScrollPane(reportTextArea);
 
-    public UserInterface() {
+    public UserInterface(String title) {
+        frame.setTitle(title);
         startButton.setEnabled(true);
         resumeButton.setEnabled(false);
         suspendButton.setEnabled(false);
@@ -137,7 +138,6 @@ public class UserInterface extends Thread implements NotificationInterface {
 
         frame.add(basePanel);
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
 
         frame.pack();
