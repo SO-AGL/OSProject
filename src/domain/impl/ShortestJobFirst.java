@@ -22,8 +22,9 @@ public class ShortestJobFirst extends SchedulingStrategy {
                 var line = process.getNextLine();
 
                 try {
-                    Thread.sleep(quantumSizeMs);
-                    decrementBlockedTimes();
+                    executing = process;
+                    passQuantum();
+                    executing = null;
 
                     if (line.getBlockFor() > 0) {
                         process.setBlockedFor(line.getBlockFor());
@@ -35,15 +36,14 @@ public class ShortestJobFirst extends SchedulingStrategy {
                 }
             }
 
-            if (!process.hasNextLine() && process.getBlockedFor() == 0) {
+            if (process.getBlockedFor() == 0) {
                 finished.add(process);
             }
 
         } catch (NoSuchElementException e) {
 
             try {
-                Thread.sleep(quantumSizeMs);
-                decrementBlockedTimes();
+                passQuantum();
                 return;
             } catch (InterruptedException ie) {
                 return;

@@ -68,9 +68,14 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
     @Override
     public void displayProcessQueues() {
         String processQueues;
+        var executingProcess = "- Executing: ";
         var readyQueue = "- Ready: ";
         var blockedQueue = "- Blocked: ";
         var finishedQueue = "- Finished: ";
+
+        if (schedulingStrategy.executing != null) {
+            executingProcess += schedulingStrategy.executing.getName();
+        }
 
         var readyNames = schedulingStrategy.ready.stream().map(p -> p.getName()).collect(Collectors.toList());
         readyQueue += String.join(", ", readyNames);
@@ -79,7 +84,7 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         var finishedNames = schedulingStrategy.finished.stream().map(p -> p.getName()).collect(Collectors.toList());
         finishedQueue += String.join(", ", finishedNames);
 
-        processQueues = String.join("\n", readyQueue, blockedQueue, finishedQueue);
+        processQueues = String.join("\n", executingProcess, readyQueue, blockedQueue, finishedQueue);
         notificationInterface.display("Short Term scheduler:\nProcess queues:\n" + processQueues + "\n");
     }
 
