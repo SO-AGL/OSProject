@@ -9,7 +9,12 @@ public abstract class SchedulingStrategy {
     public Queue<domain.impl.Process> blocked;
     public Queue<domain.impl.Process> finished = new ArrayDeque<>();
 
-    protected int quantumSizeMs; 
+    protected int quantumSizeMs;
+    protected NotificationInterface notificationInterface;
+
+    public void setNotificationInterface(NotificationInterface notificationInterface) {
+        this.notificationInterface = notificationInterface;
+    }
 
     public abstract void execute();
 
@@ -17,7 +22,12 @@ public abstract class SchedulingStrategy {
         quantumSizeMs = size;
     }
 
-    protected void decrementBlockedTimes() {
+    protected void passQuantum() throws InterruptedException {
+        Thread.sleep(quantumSizeMs);
+        decrementBlockedTimes();
+    }
+
+    private void decrementBlockedTimes() {
         var toRemove = new ArrayList<>();
         for (var blockedProcess : blocked) {
             blockedProcess.decrementBlockedTime();

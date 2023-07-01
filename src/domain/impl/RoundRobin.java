@@ -13,29 +13,31 @@ public class RoundRobin extends SchedulingStrategy {
     @Override
     public void execute() {
         try {
-            Thread.sleep(quantumSizeMs);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+            var process = ready.remove();
 
-        decrementBlockedTimes();
+            if (process.hasNextLine()) {
+                var line = process.getNextLine();
 
-        try {
-            var readyProcess = ready.remove();
+                try {
+                    notificationInterface.display("RoundRobin: Executing: " + process.getName());
+                    passQuantum();
 
-            if (readyProcess.hasNextLine()) {
-                var line = readyProcess.getNextLine();
-
-                if (line.getBlockFor() > 0) {
-                    readyProcess.setBlockedFor(line.getBlockFor());
-                    blocked.add(readyProcess);
-                } else {
-                    ready.add(readyProcess);
-                }
+                    if (line.getBlockFor() > 0) {
+                        process.setBlockedFor(line.getBlockFor());
+                        blocked.add(process);
+                    } else if (process.hasNextLine()) {
+                        ready.add(process);
+                    } else {
+                        finished.add(process);
+                    }
+                } catch (InterruptedException ie) { }
             } else {
-                finished.add(readyProcess);
+                finished.add(process);
             }
-
-        } catch (NoSuchElementException e) { }
+        } catch (NoSuchElementException e) {
+            try {
+                passQuantum();
+            } catch (InterruptedException ie) { }
+        }
     }
 }

@@ -20,6 +20,7 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
 
     public void setNotificationInterface(NotificationInterface notificationInterface) {
         this.notificationInterface = notificationInterface;
+        this.schedulingStrategy.setNotificationInterface(notificationInterface);
     }
 
     @Override
@@ -80,7 +81,7 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         finishedQueue += String.join(", ", finishedNames);
 
         processQueues = String.join("\n", readyQueue, blockedQueue, finishedQueue);
-        notificationInterface.display("Short Term scheduler:\nProcess queues:\n" + processQueues + "\n");
+        notificationInterface.display("\nShort Term scheduler:\nProcess queues:\n" + processQueues + "\n");
     }
 
     public void run() {
