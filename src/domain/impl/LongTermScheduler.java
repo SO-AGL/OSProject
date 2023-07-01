@@ -6,11 +6,10 @@ import domain.api.SubmissionInterface;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.nio.file.NoSuchFileException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-
 
 public class LongTermScheduler extends Thread implements SubmissionInterface {
     private InterSchedulerInterface interSchedulerInterface = null;
@@ -36,19 +35,17 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
     @Override
     public boolean submitJob(String fileName) {
         File file = new File(fileName);
-        
-        boolean exists =      file.exists();    
+        boolean exists = file.exists();    
         boolean isDirectory = file.isDirectory();
 
         // Verify if file exists
-        if(!exists) {
-            System.out.println("A");
+        if (!exists) {
             notificationInterface.display("LongTermScheduler: Error! File not found.\n");
             return false;
         }
 
         // Verify if file is a directory > for each file in directory, call submitJob
-        if(isDirectory) {
+        if (isDirectory) {
             
             //List of files in directory
             File[] listOfFiles = file.listFiles();
@@ -56,22 +53,22 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
             //For each file in directory, call submitJob
             for (int i = 0; i < listOfFiles.length; i++) {
                 if (listOfFiles[i].isFile()) {
-                    submitJob(fileName + "/" + listOfFiles[i].getName());
+                    var newFilePath = Paths.get(fileName, listOfFiles[i].getName()).toString();
+                    submitJob(newFilePath);
                 }
             }
 
-            return false;
+            return true;
         }
 
-        // Verify if quyue is full
+        // Verify if queue is full
         if (submissionQueue.size() >= MAX_SUBMISSION_QUEUE_SIZE) {
-            notificationInterface.display("LongTermScheduler: Error! Full submission queue.\n");
+            notificationInterface.display("LongTermScheduler: Full submission queue.\n");
             return false;
         }
         
         // Everything OK > try to add process to queue
         try {
-            
             var newProcess = new Process(fileName);
 
             submissionQueue.add(newProcess);
@@ -79,7 +76,6 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
             
             return true;
         } catch (IOException | IllegalArgumentException e) {
-
             if (e instanceof NoSuchFileException) {
                 notificationInterface.display("LongTermScheduler: Error! File not found.\n");
             } else if (e instanceof IllegalArgumentException) {
@@ -89,7 +85,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
                 notificationInterface.display("LongTermScheduler: Error! See terminal for more details.");
             }
             return false;
-            
+
         }
     }
 
