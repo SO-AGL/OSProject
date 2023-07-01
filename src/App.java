@@ -22,9 +22,9 @@ public class App {
     static JPanel mainPanel = new JPanel();
     static JLabel strategyLabel = new JLabel("Scheduling strategy:", SwingConstants.CENTER);
     static JComboBox<String> strategyComboBox = new JComboBox<>(new String[] { "Shortest Job First", "Round Robin" });
-    static JLabel loadLabel = new JLabel("Max ShortTermScheduler Load (0-100):", SwingConstants.CENTER);
+    static JLabel loadLabel = new JLabel("Max ShortTermScheduler load (int >0):", SwingConstants.CENTER);
     static JFormattedTextField loadField = new JFormattedTextField(new NumberFormatter());
-    static JLabel quantumLabel = new JLabel("Quantum size in milliseconds (>0):", SwingConstants.CENTER);
+    static JLabel quantumLabel = new JLabel("Quantum size in milliseconds (int >0):", SwingConstants.CENTER);
     static JFormattedTextField quantumField = new JFormattedTextField(new NumberFormatter());
     static JPanel buttonsPanel = new JPanel();
     static JButton startButton = new JButton("Start");
@@ -103,20 +103,34 @@ public class App {
     static void createGUI() {
         startButton.addActionListener(e -> {
             SchedulingStrategy strategy = null;
+            int maxLoad = 0;
+            int quantumSizeMs = 0;
 
             if (strategyComboBox.getSelectedItem().equals("Shortest Job First")) {
                 strategy = new ShortestJobFirst();
             } else if (strategyComboBox.getSelectedItem().equals("Round Robin")) {
                 strategy = new RoundRobin();
             } else {
-                JOptionPane.showMessageDialog(null, "Invalid strategy", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Invalid strategy", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                maxLoad = Integer.parseInt(loadField.getText());
+            } catch (NumberFormatException err) {
+                JOptionPane.showMessageDialog(frame, "Invalid load", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                quantumSizeMs = Integer.parseInt(quantumField.getText());
+            } catch (NumberFormatException err) {
+                JOptionPane.showMessageDialog(frame, "Invalid quantum size", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
 
             if (strategy != null) {
-                new SchedulerSimulator(
-                        Integer.parseInt(loadField.getText()),
-                        Integer.parseInt(quantumField.getValue().toString()),
-                        strategy);
+                new SchedulerSimulator(maxLoad, quantumSizeMs, strategy);
             }
         });
 
