@@ -30,7 +30,7 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
 
     @Override
     public int getProcessLoad() {
-        return schedulingStrategy.ready.size() + schedulingStrategy.blocked.size();
+        return schedulingStrategy.ready.size() + schedulingStrategy.blocked.size() + (schedulingStrategy.isExecutingProcess() ? 1 : 0);
     }
 
     @Override

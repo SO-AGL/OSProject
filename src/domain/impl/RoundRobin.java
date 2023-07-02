@@ -11,6 +11,8 @@ import domain.api.SchedulingStrategy;
  * blocked queue, according to the last instruction.
  */
 public class RoundRobin extends SchedulingStrategy {
+    private boolean _isExecutingProcess = false;
+
     public RoundRobin() {
         ready = new ArrayDeque<>();
         blocked = new ArrayDeque<>();
@@ -20,6 +22,7 @@ public class RoundRobin extends SchedulingStrategy {
     public void execute() {
         try {
             var process = ready.remove();
+            _isExecutingProcess = true;
 
             if (process.hasNextLine()) {
                 var line = process.getNextLine();
@@ -44,6 +47,13 @@ public class RoundRobin extends SchedulingStrategy {
             try {
                 passQuantum();
             } catch (InterruptedException ie) { }
+        } finally {
+            _isExecutingProcess = false;
         }
+    }
+
+    @Override
+    public boolean isExecutingProcess() {
+        return _isExecutingProcess;
     }
 }

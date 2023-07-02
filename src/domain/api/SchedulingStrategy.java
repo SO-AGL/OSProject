@@ -18,6 +18,8 @@ public abstract class SchedulingStrategy {
 
     public abstract void execute();
 
+    public abstract boolean isExecutingProcess();
+
     public void setQuantumSizeMs(int size) {
         quantumSizeMs = size;
     }
