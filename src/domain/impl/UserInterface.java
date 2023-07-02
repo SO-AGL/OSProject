@@ -16,6 +16,10 @@ import domain.api.ControlInterface;
 import domain.api.NotificationInterface;
 import domain.api.SubmissionInterface;
 
+/**
+ * This class is the thread responsible for all the interactions
+ * with the user.
+ */
 public class UserInterface extends Thread implements NotificationInterface {
     private ControlInterface controlInterface;
     private SubmissionInterface submissionInterface;
@@ -35,6 +39,12 @@ public class UserInterface extends Thread implements NotificationInterface {
     private JTextArea reportTextArea = new JTextArea(34, 30);
     private JScrollPane reportScrollPane = new JScrollPane(reportTextArea);
 
+
+    /**
+     * Creates a window for the simulator instance.
+     *
+     * @param title - window title
+     */
     public UserInterface(String title) {
         frame.setTitle(title);
         startButton.setEnabled(true);
@@ -148,14 +158,30 @@ public class UserInterface extends Thread implements NotificationInterface {
         frame.setVisible(true);
     }
 
+    /**
+     * Sets the controlInterface instance to be used.
+     *
+     * @param controlInterface - instance of `ControlInterface`
+     */
     public void setControlInterface(ControlInterface controlInterface) {
         this.controlInterface = controlInterface;
     }
 
+    /**
+     * Sets the submissionInterface instance to be used.
+     * 
+     * @param submissionInterface - instance of `SubmissionInterface`
+     */
     public void setSubmissionInterface(SubmissionInterface submissionInterface) {
         this.submissionInterface = submissionInterface;
     }
 
+    /**
+     * Appends information to the output section of the window.
+     *
+     * @param info - information to be appended to the output section of the
+     * window.
+     */
     @Override
     public void display(String info) {
         reportTextArea.append("\n------------------------------------\n\n" + info + "\n");

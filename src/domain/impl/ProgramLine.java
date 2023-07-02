@@ -2,6 +2,9 @@ package domain.impl;
 
 import java.util.regex.Pattern;
 
+/**
+ * Class that represents a line of code in a program.
+ */
 public class ProgramLine {
     private int blockFor = 0;
     private int timeEstimate = 1;
@@ -12,8 +15,9 @@ public class ProgramLine {
      * and setting the blockFor and timeEstimate properties that will be used to
      * simulate the execution of a process.
      *
-     * @param line
-     * @throws IllegalArgumentException
+     * @param line - raw string representing a program line
+     * @throws IllegalArgumentException - if the line is invalid according to
+     * the simulated processes language
      */
     public ProgramLine(String line) throws IllegalArgumentException {
         rawContent = line;
@@ -37,7 +41,7 @@ public class ProgramLine {
      * Get the amount of quanta that this ProgramLine will block the program
      * for.
      *
-     * @return quanta
+     * @return quanta that this ProgramLine will block the program for
      */
     public int getBlockFor() {
         return blockFor;
@@ -48,12 +52,15 @@ public class ProgramLine {
      * one quantum for any type of line, plus the amount of quanta that this
      * line will block the program for, if it begins with "block".
      *
-     * @return
+     * @return estimate time needed to execute this line of code.
      */
     public int getTimeEstimate() {
         return timeEstimate;
     }
 
+    /**
+     * Returns the original contents of the program's line.
+     */
     @Override
     public String toString() {
         return rawContent;

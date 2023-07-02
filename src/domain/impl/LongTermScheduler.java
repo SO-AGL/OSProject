@@ -11,6 +11,11 @@ import java.nio.file.NoSuchFileException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This class is responsible for getting a path to a file and creating a
+ * `Process` instance with its contents, then submitting this new object to
+ * the `ShortTermScheduler` via an instance of `NotificationInterface`.
+ */
 public class LongTermScheduler extends Thread implements SubmissionInterface {
     private InterSchedulerInterface interSchedulerInterface = null;
     private NotificationInterface notificationInterface = null;
@@ -21,18 +26,39 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
     private final int MAX_SHORT_TERM_SCHEDULER_LOAD;
     private final int SLEEP_FOR_MS = 100;
 
+    /**
+     * Constructor for LongTermScheduler, accepts the max `ShortTermScheduler`
+     * load as argument, to balance the system's load.
+     * @param maxShortTermSchedulerLoad - max load for `ShortTermScheduler`
+     */
     public LongTermScheduler(int maxShortTermSchedulerLoad) {
         this.MAX_SHORT_TERM_SCHEDULER_LOAD = maxShortTermSchedulerLoad;
     }
 
+    /**
+     * Setter for `IntrSchedulerInterface` instance.
+     * @param interSchedulerInterface - instance of `InterSchedulerInterface`
+     */
     public void setInterSchedulerInterface(InterSchedulerInterface interSchedulerInterface) {
         this.interSchedulerInterface = interSchedulerInterface;
     }
 
+    /**
+     * Setter for `NotificationInterface` instance.
+     * @param notificationInterface - instance of `NotificationInterface`
+     */
     public void setNotificationInterface(NotificationInterface notificationInterface) {
         this.notificationInterface = notificationInterface;
     }
 
+    /**
+     * Method used to create a `Process` instance from a file path, then
+     * submitting it to the `ShortTermScheduler` via an instance of
+     * `NotificationInterface`. Can also submit all files inside a directory.
+     *
+     * @param fileName - path to file or directory
+     * @return boolean - true if file was submitted successfully, false otherwise
+     */
     @Override
     public boolean submitJob(String fileName) {
         var fileOrDir = new File(fileName);
@@ -84,6 +110,10 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
         }
     }
 
+    /**
+     * Displays all the processes that are in the submission queue of this
+     * scheduler waiting to be submitted to the ShortTermScheduler.
+     */
     @Override
     public void displaySubmissionQueue() {
         String output = "LongTermScheduler:\n> Submission Queue: ";
@@ -98,6 +128,12 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
         return;
     }
 
+    /**
+     * When the `Thread` is started, this method will continuously check if
+     * there are processes to be submitted, and submit them if the
+     * `ShortTermScheduler`'s load is below some limit.
+     */
+    @Override
     public void run() {
         while (true) {
 
