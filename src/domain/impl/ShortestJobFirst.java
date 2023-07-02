@@ -14,6 +14,9 @@ import domain.api.SchedulingStrategy;
 public class ShortestJobFirst extends SchedulingStrategy {
     private domain.impl.Process executing = null;
 
+    /**
+     * Intantiates a new `ShortestJobFirst` with `PriorityQueue` as ready queue.
+     */
     public ShortestJobFirst() {
         ready = new PriorityQueue<>(10,
                 (x, y) -> Integer.valueOf(x.getTimeEstimate()).compareTo(y.getTimeEstimate()));
@@ -21,6 +24,14 @@ public class ShortestJobFirst extends SchedulingStrategy {
                 (x, y) -> Integer.valueOf(x.getBlockedFor()).compareTo(y.getBlockedFor()));
     }
 
+    /**
+     * Each time this method is called, it either removes a process from the
+     * ready queue, or continues the execution of the currently executing
+     * process. If the process calls a blocking instruction, it puts it in the
+     * blocked queue. If the process has no more lines to execute, then it puts
+     * it in the finished queue. This method always executes one `ProgramLine`
+     * at a time, simulating the passing of one quantum of time.
+     */
     @Override
     public void execute() {
         try {
@@ -64,6 +75,10 @@ public class ShortestJobFirst extends SchedulingStrategy {
 
     }
 
+    /**
+     * Returns `true` if there is a process currently executing, `false`
+     * otherwise.
+     */
     @Override
     public boolean isExecutingProcess() {
         return executing != null;

@@ -3,13 +3,15 @@ package domain.impl;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
+/**
+ * Class that represents a process that will be executed by the simulation.
+ */
 public class Process {
     private String name;
     private int priority;
@@ -19,30 +21,58 @@ public class Process {
     private int lineNumber = 0;
     private int blockedFor = 0;
 
-    public Process(String filePath) throws IOException, NoSuchFileException {
+    /**
+     * Constructor that takes a file path as a parameter to create an instance
+     * of class `Process`.
+     *
+     * @param filePath - path to file containing program lines
+     * @throws IOException - if there's and error reading the file
+     */
+    public Process(String filePath) throws IOException {
         try {
             rawContent = Files.readString(Paths.get(filePath), StandardCharsets.UTF_8).replaceAll("\r", "");
 
             setHeader();
             setBody();
             makeTimeEstimate();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw e;
         }
     }
 
+    /**
+     * Getter for this process' `name` property.
+     *
+     * @return name of this process
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Getter for this process' `blockedFor` property.
+     *
+     * @return amount of quanta that this process will be blocked for
+     */
     public int getBlockedFor() {
         return blockedFor;
     }
 
+    /**
+     * Setter for this process' `blockedFor` property.
+     *
+     * @param blockedFor amount of quanta that this process will be blocked for
+     */
     public void setBlockedFor(int blockedFor) {
         this.blockedFor = blockedFor;
     }
 
+    /**
+     * Returns the next line that will be executed.
+     *
+     * @return next line that will be executed
+     * @throws NoSuchElementException if there are no more lines to execute
+     */
     public ProgramLine getNextLine() throws NoSuchElementException {
         if (hasNextLine()) {
             return body.get(lineNumber++);
@@ -51,14 +81,28 @@ public class Process {
         throw new NoSuchElementException();
     }
 
+    /**
+     * Returns `true` if there are more lines to execute, `false` otherwise.
+     *
+     * @return `true` if there are more lines to execute, `false` otherwise
+     */
     public boolean hasNextLine() {
         return lineNumber < body.size();
     }
 
+    /**
+     * Getter for this process' `timeEstimate` property.
+     *
+     * @return an estimate for the amount of time quanta this process will take
+     * to execute
+     */
     public int getTimeEstimate() {
         return timeEstimate;
     }
 
+    /**
+     * Decrements this process' blockedTime.
+     */
     public void decrementBlockedTime() {
         if (blockedFor > 0) {
             blockedFor--;
@@ -113,6 +157,9 @@ public class Process {
         }
     }
 
+    /**
+     * Returns a string representation of this process.
+     */
     @Override
     public String toString() {
         return super.toString() + "\n" +

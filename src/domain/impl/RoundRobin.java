@@ -13,11 +13,22 @@ import domain.api.SchedulingStrategy;
 public class RoundRobin extends SchedulingStrategy {
     private boolean _isExecutingProcess = false;
 
+    /**
+     * Instantiates a new `RoundRobin` that extends `SchedulingStrategy` with
+     * ready and blocked queues as new `ArrayDeque`s.
+     */
     public RoundRobin() {
         ready = new ArrayDeque<>();
         blocked = new ArrayDeque<>();
     }
 
+    /**
+     * Gets the first process in the ready queue and simulates the execution of
+     * one instruction of the process, displaying the process beign executed,
+     * passing the time of a quantum, and then adding it in the ready, blocked
+     * or finished queue, depending on the instruction read. If no process gets
+     * executed, just passes one quantum.
+     */
     @Override
     public void execute() {
         try {
@@ -52,6 +63,9 @@ public class RoundRobin extends SchedulingStrategy {
         }
     }
 
+    /**
+     * Wheter this strategy is executing an process or not.
+     */
     @Override
     public boolean isExecutingProcess() {
         return _isExecutingProcess;
