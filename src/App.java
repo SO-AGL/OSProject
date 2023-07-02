@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 import javax.swing.BorderFactory;
@@ -15,6 +16,7 @@ import domain.impl.RoundRobin;
 import domain.impl.ShortestJobFirst;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
 public class App {
@@ -23,9 +25,9 @@ public class App {
     static JLabel strategyLabel = new JLabel("Scheduling strategy:", SwingConstants.CENTER);
     static JComboBox<String> strategyComboBox = new JComboBox<>(new String[] { "Shortest Job First", "Round Robin" });
     static JLabel loadLabel = new JLabel("Max ShortTermScheduler load (int >0):", SwingConstants.CENTER);
-    static JFormattedTextField loadField = new JFormattedTextField(new NumberFormatter());
+    static JFormattedTextField loadField = new JFormattedTextField();
     static JLabel quantumLabel = new JLabel("Quantum size in milliseconds (int >0):", SwingConstants.CENTER);
-    static JFormattedTextField quantumField = new JFormattedTextField(new NumberFormatter());
+    static JFormattedTextField quantumField = new JFormattedTextField();
     static JPanel buttonsPanel = new JPanel();
     static JButton startButton = new JButton("Start");
     static JButton exitButton = new JButton("Exit");
@@ -147,6 +149,13 @@ public class App {
             frame.dispose();
             System.exit(0);
         });
+
+        var decimalFormat = new DecimalFormat("#,##0");
+        decimalFormat.setGroupingUsed(false);
+        var numberFormatter = new NumberFormatter(decimalFormat);
+
+        loadField.setFormatterFactory(new DefaultFormatterFactory(numberFormatter));
+        quantumField.setFormatterFactory(new DefaultFormatterFactory(numberFormatter));
 
         loadField.setValue(10);
         quantumField.setValue(200);
