@@ -31,38 +31,40 @@ public class App {
     static JButton exitButton = new JButton("Exit");
 
     public static void main(String[] args) throws Exception {
-        var argsList = Arrays.asList(args); // convert arguments array to list to facilitate finding the indexes of the
-                                            // flags
-        int npIndex = argsList.indexOf("-np"); // index of the number of process flag in args array
-        int quantumIndex = argsList.indexOf("-qt"); // index of the number of process flag in args array
-        int stratIndex = argsList.indexOf("-strat"); // index of the strategy flag in args array (rr or sjf)
-        int maxProcessReadySize = 100; // default max number of processes in the ready queue
-        int quantumTimeMs = 200;
-        String stratName = "sjf"; // default strategy: SJF
+        var argsList = Arrays.asList(args);
+        int npIndex = argsList.indexOf("-np");
+        int quantumIndex = argsList.indexOf("-qt");
+        int stratIndex = argsList.indexOf("-strat");
+        int maxShortTermSchedulerLoad = 10;
+        int quantumSizeMs = 200;
+        String stratName = "sjf";
         SchedulingStrategy strategy;
 
         if (npIndex != -1) { // the -np flag was used
             try {
-                maxProcessReadySize = Integer.parseInt(args[npIndex + 1]);
-                if (maxProcessReadySize <= 0) {
+                maxShortTermSchedulerLoad = Integer.parseInt(args[npIndex + 1]);
+                if (maxShortTermSchedulerLoad <= 0) {
                     throw new NumberFormatException();
                 }
-            } catch (Exception e) {
-                if (e instanceof ArrayIndexOutOfBoundsException) { // if the user uses the flag and don't inform a value
-                                                                   // in sequence
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+
+                // if the user uses the flag and don't inform a value subsequently
+                if (e instanceof ArrayIndexOutOfBoundsException) {
                     throw new ArrayIndexOutOfBoundsException("If using -np flag, inform a value (>0)");
                 }
-                if (e instanceof NumberFormatException) { // if the value informed wasn't valid (couldn't convert to
-                                                          // int, or <=0)
+
+                // if the value informed isn't valid (couldn't convert to int, or is <= 0)
+                if (e instanceof NumberFormatException) {
                     throw new NumberFormatException("Inform a valid value for np (>0)");
                 }
+
                 throw e;
             }
         }
 
         if (quantumIndex != -1) {
             try {
-                quantumTimeMs = Integer.parseInt(args[quantumIndex + 1]);
+                quantumSizeMs = Integer.parseInt(args[quantumIndex + 1]);
             } catch (NumberFormatException e) {
                 throw new NumberFormatException("Inform a valid value for qt (>0)");
             }
@@ -74,14 +76,18 @@ public class App {
                 if (!stratName.equals("sjf") && !stratName.equals("rr")) {
                     throw new IllegalArgumentException();
                 }
-            } catch (Exception e) {
-                if (e instanceof ArrayIndexOutOfBoundsException) { // if the user uses the flag and don't inform a value
-                                                                   // in sequence
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+
+                // if the user uses the flag and don't inform a value subsequently
+                if (e instanceof ArrayIndexOutOfBoundsException) {
                     throw new ArrayIndexOutOfBoundsException("If using -strat flag, inform a value ('rr' or 'sjf')");
                 }
-                if (e instanceof IllegalArgumentException) { // if the value informed wasn't valid (not 'sjf' nor 'rr')
+
+                // if the value informed wasn't valid (not 'sjf' nor 'rr')
+                if (e instanceof IllegalArgumentException) {
                     throw new IllegalArgumentException("Inform a valid strategy ('rr' or 'sjf')");
                 }
+
                 throw e;
             }
         }
@@ -95,11 +101,14 @@ public class App {
         createGUI();
 
         if (npIndex != -1 || stratIndex != -1 || quantumIndex != -1) {
-            new SchedulerSimulator(maxProcessReadySize, quantumTimeMs, strategy);
+            new SchedulerSimulator(maxShortTermSchedulerLoad, quantumSizeMs, strategy);
         }
 
     }
 
+    /**
+     * Creates a window that allows the user to configure and start simulations.
+     */
     static void createGUI() {
         startButton.addActionListener(e -> {
             SchedulingStrategy strategy = null;

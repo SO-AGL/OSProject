@@ -162,6 +162,11 @@ public class UserInterface extends Thread implements NotificationInterface {
         reportTextArea.setCaretPosition(reportTextArea.getDocument().getLength());
     }
 
+    /**
+     * Helper method to reduce code repetition when submiting a job (used in
+     * action listeners to submit a job whenever the user clicks the submit job
+     * button or presses enter in the job text field).
+     */
     private void submitJob() {
         String input = jobTextField.getText();
         if (input.equals("")) {

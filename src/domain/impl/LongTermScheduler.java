@@ -16,12 +16,13 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
     private NotificationInterface notificationInterface = null;
 
     private List<Process> submissionQueue = new ArrayList<Process>();
-    private int MAX_SUBMISSION_QUEUE_SIZE = 10000;
-    private int MAX_PROCESS_OPEN_SIZE = 0;
-    private int VERIFY_INTERVAL_MS = 100;
 
-    public LongTermScheduler(int maxProcessOpenSize) {
-        MAX_PROCESS_OPEN_SIZE = maxProcessOpenSize;
+    private final int MAX_SUBMISSION_QUEUE_SIZE = 10000;
+    private final int MAX_SHORT_TERM_SCHEDULER_LOAD;
+    private final int SLEEP_FOR_MS = 100;
+
+    public LongTermScheduler(int maxShortTermSchedulerLoad) {
+        this.MAX_SHORT_TERM_SCHEDULER_LOAD = maxShortTermSchedulerLoad;
     }
 
     public void setInterSchedulerInterface(InterSchedulerInterface interSchedulerInterface) {
@@ -34,26 +35,21 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
     @Override
     public boolean submitJob(String fileName) {
-        File file = new File(fileName);
-        boolean exists = file.exists();    
-        boolean isDirectory = file.isDirectory();
+        var fileOrDir = new File(fileName);
 
-        // Verify if file exists
-        if (!exists) {
+        if (!fileOrDir.exists()) {
             notificationInterface.display("LongTermScheduler: \nError! File not found.");
             return false;
         }
 
-        // Verify if file is a directory > for each file in directory, call submitJob
-        if (isDirectory) {
-            
-            //List of files in directory
-            File[] listOfFiles = file.listFiles();
+        // if file is a directory, then recursively call submitJob for each file
+        // in directory
+        if (fileOrDir.isDirectory()) {
+            var files = fileOrDir.listFiles();
 
-            //For each file in directory, call submitJob
-            for (int i = 0; i < listOfFiles.length; i++) {
-                if (listOfFiles[i].isFile()) {
-                    var newFilePath = Paths.get(fileName, listOfFiles[i].getName()).toString();
+            for (var file : files) {
+                if (file.isFile()) {
+                    var newFilePath = Paths.get(fileName, file.getName()).toString();
                     submitJob(newFilePath);
                 }
             }
@@ -61,20 +57,19 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
             return true;
         }
 
-        // Verify if queue is full
         if (submissionQueue.size() >= MAX_SUBMISSION_QUEUE_SIZE) {
             notificationInterface.display("LongTermScheduler: \nFull submission queue.");
             return false;
         }
-        
-        // Everything OK > try to add process to queue
+
         try {
             var newProcess = new Process(fileName);
 
             submissionQueue.add(newProcess);
             displaySubmissionQueue();
-            
+
             return true;
+
         } catch (IOException | IllegalArgumentException e) {
             if (e instanceof NoSuchFileException) {
                 notificationInterface.display("LongTermScheduler: \nError! File not found.");
@@ -91,8 +86,11 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
     @Override
     public void displaySubmissionQueue() {
-        String output = "LongTermScheduler:\n> Submission queue: ";
-        var processes = submissionQueue.stream().map(p -> p.getName()).collect(Collectors.toList());
+        String output = "LongTermScheduler:\n> Submission Queue: ";
+
+        var processes = submissionQueue.stream()
+                .map(p -> p.getName())
+                .collect(Collectors.toList());
 
         output += String.join(", ", processes);
         notificationInterface.display(output);
@@ -105,7 +103,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
             if (submissionQueue.size() > 0) {
 
-                if (interSchedulerInterface.getProcessLoad() < MAX_PROCESS_OPEN_SIZE) {
+                if (interSchedulerInterface.getProcessLoad() < MAX_SHORT_TERM_SCHEDULER_LOAD) {
                     var newProcess = submissionQueue.remove(0);
 
                     interSchedulerInterface.addProcess(newProcess);
@@ -116,7 +114,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
             }
 
             try {
-                Thread.sleep(VERIFY_INTERVAL_MS);
+                Thread.sleep(SLEEP_FOR_MS);
             } catch (InterruptedException e) {
                 notificationInterface.display("LongTermScheduler: \nLongTermScheduler interrupted.");
             }
