@@ -12,6 +12,8 @@ import domain.api.SchedulingStrategy;
  * blocked.
  */
 public class ShortestJobFirst extends SchedulingStrategy {
+    private domain.impl.Process executing = null;
+
     public ShortestJobFirst() {
         ready = new PriorityQueue<>(10,
                 (x, y) -> Integer.valueOf(x.getTimeEstimate()).compareTo(y.getTimeEstimate()));
@@ -22,18 +24,21 @@ public class ShortestJobFirst extends SchedulingStrategy {
     @Override
     public void execute() {
         try {
-            var process = ready.remove();
+            if (executing == null) {
+                executing = ready.remove();
+            }
 
-            while (process.hasNextLine()) {
-                var line = process.getNextLine();
+            if (executing.hasNextLine()) {
+                var line = executing.getNextLine();
 
                 try {
-                    notificationInterface.display("ShortestJobFirst: \nExecuting: " + process.getName());
+                    notificationInterface.display("ShortestJobFirst:\nExecuting: " + executing.getName());
                     passQuantum();
 
                     if (line.getBlockFor() > 0) {
-                        process.setBlockedFor(line.getBlockFor());
-                        blocked.add(process);
+                        executing.setBlockedFor(line.getBlockFor());
+                        blocked.add(executing);
+                        executing = null;
                         return;
                     }
                 } catch (InterruptedException ie) {
@@ -41,8 +46,9 @@ public class ShortestJobFirst extends SchedulingStrategy {
                 }
             }
 
-            if (process.getBlockedFor() == 0) {
-                finished.add(process);
+            if (!executing.hasNextLine() && executing.getBlockedFor() == 0) {
+                finished.add(executing);
+                executing = null;
             }
 
         } catch (NoSuchElementException e) {
@@ -56,6 +62,11 @@ public class ShortestJobFirst extends SchedulingStrategy {
 
         }
 
+    }
+
+    @Override
+    public boolean isExecutingProcess() {
+        return executing != null;
     }
 
 }
