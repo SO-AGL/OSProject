@@ -115,6 +115,8 @@ public class UserInterface extends Thread implements NotificationInterface {
         });
 
         reportTextArea.setEditable(false);
+        reportTextArea.setLineWrap(true);
+        reportTextArea.setWrapStyleWord(true);
         reportScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
@@ -156,7 +158,7 @@ public class UserInterface extends Thread implements NotificationInterface {
 
     @Override
     public void display(String info) {
-        reportTextArea.append(info + "\n");
+        reportTextArea.append("\n------------------------------------\n\n" + info + "\n");
         reportTextArea.setCaretPosition(reportTextArea.getDocument().getLength());
     }
 

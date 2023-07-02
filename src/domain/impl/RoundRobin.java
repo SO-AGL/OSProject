@@ -19,7 +19,7 @@ public class RoundRobin extends SchedulingStrategy {
                 var line = process.getNextLine();
 
                 try {
-                    notificationInterface.display("RoundRobin: Executing: " + process.getName());
+                    notificationInterface.display("RoundRobin: \nExecuting: " + process.getName());
                     passQuantum();
 
                     if (line.getBlockFor() > 0) {

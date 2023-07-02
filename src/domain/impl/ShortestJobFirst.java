@@ -22,7 +22,7 @@ public class ShortestJobFirst extends SchedulingStrategy {
                 var line = process.getNextLine();
 
                 try {
-                    notificationInterface.display("ShortestJobFirst: Executing: " + process.getName());
+                    notificationInterface.display("ShortestJobFirst: \nExecuting: " + process.getName());
                     passQuantum();
 
                     if (line.getBlockFor() > 0) {
