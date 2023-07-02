@@ -1,5 +1,7 @@
 package domain.impl;
 
+import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 import domain.api.ControlInterface;
@@ -13,6 +15,11 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
 
     private boolean isRunning = false;
 
+    // This is important to avoid ConcurrentModificationException, because
+    // while the queue is being printed, the LongTermScheduler can add a
+    // process to the ready queue
+    private Semaphore readySemaphore = new Semaphore(1);
+
     public ShortTermScheduler(SchedulingStrategy schedulingStrategy, int quantumSizeMs) {
         this.schedulingStrategy = schedulingStrategy;
         this.schedulingStrategy.setQuantumSizeMs(quantumSizeMs);
@@ -25,12 +32,19 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
 
     @Override
     public void addProcess(Process process) {
-        schedulingStrategy.ready.add(process);
+        try {
+            readySemaphore.acquire();
+            schedulingStrategy.ready.add(process);
+            readySemaphore.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public int getProcessLoad() {
-        return schedulingStrategy.ready.size() + schedulingStrategy.blocked.size() + (schedulingStrategy.isExecutingProcess() ? 1 : 0);
+        return schedulingStrategy.ready.size() + schedulingStrategy.blocked.size()
+                + (schedulingStrategy.isExecutingProcess() ? 1 : 0);
     }
 
     @Override
@@ -63,7 +77,8 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         isRunning = false;
         restart();
 
-        notificationInterface.display("ShortTermScheduler: \nSimulation stopped! \nAll processes were removed from the queues.");
+        notificationInterface
+                .display("ShortTermScheduler: \nSimulation stopped! \nAll processes were removed from the queues.");
     }
 
     @Override
@@ -72,8 +87,17 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         var readyQueue = "\n> Ready:\t";
         var blockedQueue = "\n> Blocked:\t";
         var finishedQueue = "\n> Finished:\t";
+        List<String> readyNames;
 
-        var readyNames = schedulingStrategy.ready.stream().map(p -> p.getName()).collect(Collectors.toList());
+        try {
+            readySemaphore.acquire();
+            readyNames = schedulingStrategy.ready.stream().map(p -> p.getName()).collect(Collectors.toList());
+            readySemaphore.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return;
+        }
+
         readyQueue += String.join(", ", readyNames);
         var blockedNames = schedulingStrategy.blocked.stream().map(p -> p.getName()).collect(Collectors.toList());
         blockedQueue += String.join(", ", blockedNames);
