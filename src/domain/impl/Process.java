@@ -65,6 +65,11 @@ public class Process {
         }
     }
 
+    /**
+     * Parses program header from raw content.
+     *
+     * @throws IllegalArgumentException
+     */
     private void setHeader() throws IllegalArgumentException {
         var headerPattern = Pattern.compile("^program ([a-zA-Z0-9.]+) (\\d)$", Pattern.MULTILINE);
         var headerMatcher = headerPattern.matcher(rawContent);
@@ -77,6 +82,11 @@ public class Process {
         }
     }
 
+    /**
+     * Parses program body from raw content.
+     *
+     * @throws IllegalArgumentException
+     */
     private void setBody() throws IllegalArgumentException {
         var contentPattern = Pattern.compile("begin\n([a-zA-Z0-5 \n]+)end\n?");
         var contentMatcher = contentPattern.matcher(rawContent);
@@ -93,6 +103,10 @@ public class Process {
         }
     }
 
+    /**
+     * Estimates total process execution time by summing time estimates of
+     * individual program lines.
+     */
     private void makeTimeEstimate() {
         for (var line : body) {
             timeEstimate += line.getTimeEstimate();

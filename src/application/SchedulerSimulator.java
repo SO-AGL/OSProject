@@ -10,10 +10,11 @@ public class SchedulerSimulator {
     private LongTermScheduler longTermScheduler;
     private ShortTermScheduler shortTermScheduler;
 
-    public SchedulerSimulator(int maxProcessReadySize, int quantumTimeMs, SchedulingStrategy schedulingStrategy) {
-        shortTermScheduler = new ShortTermScheduler(schedulingStrategy, quantumTimeMs);
-        longTermScheduler = new LongTermScheduler(maxProcessReadySize);
-        userInterface = new UserInterface(schedulingStrategy.getClass().getSimpleName() + ", max load: " + maxProcessReadySize + ", quantum: " + quantumTimeMs + "ms");
+    public SchedulerSimulator(int maxShortTermSchedulerLoad, int quantumSizeMs, SchedulingStrategy schedulingStrategy) {
+        shortTermScheduler = new ShortTermScheduler(schedulingStrategy, quantumSizeMs);
+        longTermScheduler = new LongTermScheduler(maxShortTermSchedulerLoad);
+        userInterface = new UserInterface(schedulingStrategy.getClass().getSimpleName() + ", max load: "
+                + maxShortTermSchedulerLoad + ", quantum: " + quantumSizeMs + "ms");
 
         shortTermScheduler.setNotificationInterface(userInterface);
         longTermScheduler.setInterSchedulerInterface(shortTermScheduler);

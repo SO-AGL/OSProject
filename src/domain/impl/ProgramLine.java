@@ -7,6 +7,14 @@ public class ProgramLine {
     private int timeEstimate = 1;
     private String rawContent;
 
+    /**
+     * Constructs an instance of ProgramLine from a String line by parsing it
+     * and setting the blockFor and timeEstimate properties that will be used to
+     * simulate the execution of a process.
+     *
+     * @param line
+     * @throws IllegalArgumentException
+     */
     public ProgramLine(String line) throws IllegalArgumentException {
         rawContent = line;
 
@@ -25,10 +33,23 @@ public class ProgramLine {
         }
     }
 
+    /**
+     * Get the amount of quanta that this ProgramLine will block the program
+     * for.
+     *
+     * @return quanta
+     */
     public int getBlockFor() {
         return blockFor;
     }
 
+    /**
+     * Get the time estimate for this ProgramLine. This is calculated like this:
+     * one quantum for any type of line, plus the amount of quanta that this
+     * line will block the program for, if it begins with "block".
+     *
+     * @return
+     */
     public int getTimeEstimate() {
         return timeEstimate;
     }

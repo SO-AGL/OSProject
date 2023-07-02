@@ -5,6 +5,12 @@ import java.util.PriorityQueue;
 
 import domain.api.SchedulingStrategy;
 
+/**
+ * This scheduling algorithm uses PriorityQueue for its ready queue, ordered by
+ * time estimates, so that when it executes a process, it removes it from the
+ * front of the queue, and executes it until the process either finishes or is
+ * blocked.
+ */
 public class ShortestJobFirst extends SchedulingStrategy {
     public ShortestJobFirst() {
         ready = new PriorityQueue<>(10,
