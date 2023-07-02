@@ -65,8 +65,16 @@ public class App {
         if (quantumIndex != -1) {
             try {
                 quantumSizeMs = Integer.parseInt(args[quantumIndex + 1]);
-            } catch (NumberFormatException e) {
-                throw new NumberFormatException("Inform a valid value for qt (>0)");
+                if (quantumSizeMs <= 0) {
+                    throw new NumberFormatException();
+                }
+            } catch (Exception e) {
+                if (e instanceof NumberFormatException) {
+                    throw new NumberFormatException("Inform a valid value for qt (>0)");
+                }
+                if (e instanceof ArrayIndexOutOfBoundsException) {
+                    throw new ArrayIndexOutOfBoundsException("If using -qt flag, inform a value (>0)");
+                }
             }
         }
 
@@ -126,6 +134,9 @@ public class App {
 
             try {
                 maxLoad = Integer.parseInt(loadField.getText());
+                if (maxLoad <= 0) {
+                    throw new NumberFormatException();
+                }
             } catch (NumberFormatException err) {
                 JOptionPane.showMessageDialog(frame, "Invalid load", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -133,6 +144,9 @@ public class App {
 
             try {
                 quantumSizeMs = Integer.parseInt(quantumField.getText());
+                if (quantumSizeMs <= 0) {
+                    throw new NumberFormatException();
+                }
             } catch (NumberFormatException err) {
                 JOptionPane.showMessageDialog(frame, "Invalid quantum size", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
