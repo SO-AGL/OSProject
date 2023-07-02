@@ -41,21 +41,21 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
             start();
         }
 
-        notificationInterface.display("Simulation started!\n");
+        notificationInterface.display("ShortTermScheduler: \nSimulation started!");
     }
 
     @Override
     public void suspendSimulation() {
         isRunning = false;
 
-        notificationInterface.display("Simulation suspended!\n");
+        notificationInterface.display("ShortTermScheduler: \nSimulation suspended!");
     }
 
     @Override
     public void resumeSimulation() {
         isRunning = true;
 
-        notificationInterface.display("Simulation resumed!\n");
+        notificationInterface.display("ShortTermScheduler: \nSimulation resumed!");
     }
 
     @Override
@@ -63,15 +63,15 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         isRunning = false;
         restart();
 
-        notificationInterface.display("Simulation stopped!\nAll processes were removed from the queues.\n");
+        notificationInterface.display("ShortTermScheduler: \nSimulation stopped! \nAll processes were removed from the queues.");
     }
 
     @Override
     public void displayProcessQueues() {
         String processQueues;
-        var readyQueue = "- Ready: ";
-        var blockedQueue = "- Blocked: ";
-        var finishedQueue = "- Finished: ";
+        var readyQueue = "\n> Ready:\t";
+        var blockedQueue = "\n> Blocked:\t";
+        var finishedQueue = "\n> Finished:\t";
 
         var readyNames = schedulingStrategy.ready.stream().map(p -> p.getName()).collect(Collectors.toList());
         readyQueue += String.join(", ", readyNames);
@@ -81,7 +81,7 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         finishedQueue += String.join(", ", finishedNames);
 
         processQueues = String.join("\n", readyQueue, blockedQueue, finishedQueue);
-        notificationInterface.display("\nShort Term scheduler:\nProcess queues:\n" + processQueues + "\n");
+        notificationInterface.display("ShortTermScheduler: \nProcess queues \n" + processQueues);
     }
 
     public void run() {

@@ -40,7 +40,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
         // Verify if file exists
         if (!exists) {
-            notificationInterface.display("LongTermScheduler: Error! File not found.\n");
+            notificationInterface.display("LongTermScheduler: \nError! File not found.");
             return false;
         }
 
@@ -63,7 +63,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
         // Verify if queue is full
         if (submissionQueue.size() >= MAX_SUBMISSION_QUEUE_SIZE) {
-            notificationInterface.display("LongTermScheduler: Full submission queue.\n");
+            notificationInterface.display("LongTermScheduler: \nFull submission queue.");
             return false;
         }
         
@@ -77,12 +77,12 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
             return true;
         } catch (IOException | IllegalArgumentException e) {
             if (e instanceof NoSuchFileException) {
-                notificationInterface.display("LongTermScheduler: Error! File not found.\n");
+                notificationInterface.display("LongTermScheduler: \nError! File not found.");
             } else if (e instanceof IllegalArgumentException) {
-                notificationInterface.display("LongTermScheduler: Error! " + e.getMessage());
+                notificationInterface.display("LongTermScheduler: \nError! " + e.getMessage());
             } else {
                 e.printStackTrace();
-                notificationInterface.display("LongTermScheduler: Error! See terminal for more details.");
+                notificationInterface.display("LongTermScheduler: \nError! See terminal for more details.");
             }
             return false;
 
@@ -91,11 +91,11 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
     @Override
     public void displaySubmissionQueue() {
-        String output = "LongTermScheduler:\nSubmission Queue: ";
+        String output = "LongTermScheduler:\n> Submission queue: ";
         var processes = submissionQueue.stream().map(p -> p.getName()).collect(Collectors.toList());
 
         output += String.join(", ", processes);
-        notificationInterface.display(output + "\n");
+        notificationInterface.display(output);
 
         return;
     }
@@ -110,8 +110,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
 
                     interSchedulerInterface.addProcess(newProcess);
 
-                    notificationInterface.display(
-                            "LongTermScheduler:\nProcess " + newProcess.getName() + " added to the ready queue.\n");
+                    notificationInterface.display("LongTermScheduler: \nProcess " + newProcess.getName() + " added to the ready queue.");
                 }
 
             }
@@ -119,7 +118,7 @@ public class LongTermScheduler extends Thread implements SubmissionInterface {
             try {
                 Thread.sleep(VERIFY_INTERVAL_MS);
             } catch (InterruptedException e) {
-                notificationInterface.display("LongTermScheduler:\nLong Term Scheduler interrupted.\n");
+                notificationInterface.display("LongTermScheduler: \nLongTermScheduler interrupted.");
             }
 
         }
