@@ -1,8 +1,10 @@
-package domain.api;
+package domain.impl;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
+
+import domain.api.NotificationInterface;
 
 public abstract class SchedulingStrategy {
     public Queue<domain.impl.Process> ready;

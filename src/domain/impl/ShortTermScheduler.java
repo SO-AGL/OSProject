@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import domain.api.ControlInterface;
 import domain.api.InterSchedulerInterface;
 import domain.api.NotificationInterface;
-import domain.api.SchedulingStrategy;
 
 public class ShortTermScheduler extends Thread implements ControlInterface, InterSchedulerInterface {
     private NotificationInterface notificationInterface;

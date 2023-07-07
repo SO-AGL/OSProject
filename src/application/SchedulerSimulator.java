@@ -1,7 +1,7 @@
 package application;
 
-import domain.api.SchedulingStrategy;
 import domain.impl.LongTermScheduler;
+import domain.impl.SchedulingStrategy;
 import domain.impl.ShortTermScheduler;
 import domain.impl.UserInterface;
 
