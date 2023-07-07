@@ -43,7 +43,11 @@ public abstract class SchedulingStrategy {
             blockedProcess.decrementBlockedTime();
 
             if (blockedProcess.getBlockedFor() == 0) {
-                ready.add(blockedProcess);
+                if (blockedProcess.hasNextLine()) {
+                    ready.add(blockedProcess);
+                } else {
+                    finished.add(blockedProcess);
+                }
                 toRemove.add(blockedProcess);
             }
         }
