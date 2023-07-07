@@ -11,8 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import application.SchedulerSimulator;
-import domain.api.SchedulingStrategy;
 import domain.impl.RoundRobin;
+import domain.impl.SchedulingStrategy;
 import domain.impl.ShortestJobFirst;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
