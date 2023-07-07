@@ -26,19 +26,20 @@ public class Utils {
      * @param getter - function to get the property with which to compare
      * elements.
      */
-    public static <T, S extends Comparable<S>> int upperBound(List<T> list, S target, Function<T, S> getter) {
+    public static <T, S extends Comparable<S>> int upperBound(List<T> list, T target, Function<T, S> getter) {
         int l = 0;
-        int r = list.size() - 1;
+        int r = list.size();
         
-        while (l < r) {
+        while (l < r && l < list.size()) {
             int m = (l + r) / 2;
             var element = list.get(m);
             var value = getter.apply(element);
+            var targetValue = getter.apply(target);
 
-            if (value.compareTo(target) <= 0) {
+            if (value.compareTo(targetValue) < 0) {
                 l = m + 1;
             } else {
-                r = m - 1;
+                r = m;
             }
         }
 
