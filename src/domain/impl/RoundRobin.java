@@ -2,7 +2,6 @@ package domain.impl;
 
 import java.util.ArrayDeque;
 import java.util.NoSuchElementException;
-import domain.api.SchedulingStrategy;
 
 /**
  * This scheduling strategy uses ArrayDeque for its ready queue, so that

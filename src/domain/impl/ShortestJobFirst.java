@@ -3,8 +3,6 @@ package domain.impl;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 
-import domain.api.SchedulingStrategy;
-
 /**
  * This scheduling algorithm uses PriorityQueue for its ready queue, ordered by
  * time estimates, so that when it executes a process, it removes it from the
