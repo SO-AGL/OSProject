@@ -1,7 +1,8 @@
 package domain.impl;
 
 import java.util.NoSuchElementException;
-import java.util.PriorityQueue;
+
+import utils.PriorityQueue;
 
 /**
  * This scheduling algorithm uses PriorityQueue for its ready queue, ordered by
@@ -15,10 +16,8 @@ public class ShortestJobFirst extends SchedulingStrategy {
      * Intantiates a new `ShortestJobFirst` with `PriorityQueue` as ready queue.
      */
     public ShortestJobFirst() {
-        ready = new PriorityQueue<>(10,
-                (x, y) -> Integer.valueOf(x.getTimeEstimate()).compareTo(y.getTimeEstimate()));
-        blocked = new PriorityQueue<>(10,
-                (x, y) -> Integer.valueOf(x.getBlockedFor()).compareTo(y.getBlockedFor()));
+        ready = new PriorityQueue<Process, Integer>(x -> x.getTimeEstimate());
+        blocked = new PriorityQueue<Process, Integer>(x -> x.getTimeEstimate());
     }
 
     /**
