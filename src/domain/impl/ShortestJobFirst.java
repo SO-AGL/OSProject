@@ -3,8 +3,6 @@ package domain.impl;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 
-import domain.api.SchedulingStrategy;
-
 /**
  * This scheduling algorithm uses PriorityQueue for its ready queue, ordered by
  * time estimates, so that when it executes a process, it removes it from the
@@ -12,7 +10,6 @@ import domain.api.SchedulingStrategy;
  * blocked.
  */
 public class ShortestJobFirst extends SchedulingStrategy {
-    private domain.impl.Process executing = null;
 
     /**
      * Intantiates a new `ShortestJobFirst` with `PriorityQueue` as ready queue.
@@ -46,6 +43,11 @@ public class ShortestJobFirst extends SchedulingStrategy {
                     notificationInterface.display("ShortestJobFirst:\nExecuting: " + executing.getName());
                     passQuantum();
 
+                    // This means the simulation was stopped by another thread
+                    if (executing == null) {
+                        return;
+                    }
+
                     if (line.getBlockFor() > 0) {
                         executing.setBlockedFor(line.getBlockFor());
                         blocked.add(executing);
@@ -73,15 +75,6 @@ public class ShortestJobFirst extends SchedulingStrategy {
 
         }
 
-    }
-
-    /**
-     * Returns `true` if there is a process currently executing, `false`
-     * otherwise.
-     */
-    @Override
-    public boolean isExecutingProcess() {
-        return executing != null;
     }
 
 }

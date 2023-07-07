@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import domain.api.ControlInterface;
 import domain.api.InterSchedulerInterface;
 import domain.api.NotificationInterface;
-import domain.api.SchedulingStrategy;
 
 /**
  * This class is responsible for executing a scheduling strategy in a given list
@@ -190,6 +189,7 @@ public class ShortTermScheduler extends Thread implements ControlInterface, Inte
         schedulingStrategy.ready.clear();
         schedulingStrategy.blocked.clear();
         schedulingStrategy.finished.clear();
+        schedulingStrategy.resetExecuting();
 
         return;
     }

@@ -2,7 +2,6 @@ package domain.impl;
 
 import java.util.ArrayDeque;
 import java.util.NoSuchElementException;
-import domain.api.SchedulingStrategy;
 
 /**
  * This scheduling strategy uses ArrayDeque for its ready queue, so that
@@ -11,7 +10,6 @@ import domain.api.SchedulingStrategy;
  * blocked queue, according to the last instruction.
  */
 public class RoundRobin extends SchedulingStrategy {
-    private boolean _isExecutingProcess = false;
 
     /**
      * Instantiates a new `RoundRobin` that extends `SchedulingStrategy` with
@@ -32,42 +30,39 @@ public class RoundRobin extends SchedulingStrategy {
     @Override
     public void execute() {
         try {
-            var process = ready.remove();
-            _isExecutingProcess = true;
+            executing = ready.remove();
 
-            if (process.hasNextLine()) {
-                var line = process.getNextLine();
+            if (executing.hasNextLine()) {
+                var line = executing.getNextLine();
 
                 try {
-                    notificationInterface.display("RoundRobin: \nExecuting: " + process.getName());
+                    notificationInterface.display("RoundRobin: \nExecuting: " + executing.getName());
                     passQuantum();
 
+                    // This means the simulation was stopped by another thread
+                    if (executing == null) {
+                        return;
+                    }
+
                     if (line.getBlockFor() > 0) {
-                        process.setBlockedFor(line.getBlockFor());
-                        blocked.add(process);
-                    } else if (process.hasNextLine()) {
-                        ready.add(process);
+                        executing.setBlockedFor(line.getBlockFor());
+                        blocked.add(executing);
+                    } else if (executing.hasNextLine()) {
+                        ready.add(executing);
                     } else {
-                        finished.add(process);
+                        finished.add(executing);
                     }
                 } catch (InterruptedException ie) { }
             } else {
-                finished.add(process);
+                finished.add(executing);
             }
         } catch (NoSuchElementException e) {
             try {
                 passQuantum();
             } catch (InterruptedException ie) { }
         } finally {
-            _isExecutingProcess = false;
+            executing = null;
         }
     }
 
-    /**
-     * Wheter this strategy is executing an process or not.
-     */
-    @Override
-    public boolean isExecutingProcess() {
-        return _isExecutingProcess;
-    }
 }

@@ -1,8 +1,10 @@
-package domain.api;
+package domain.impl;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
+
+import domain.api.NotificationInterface;
 
 /**
  * Abstract class to declare methods that all Strategies must have, and reuse
@@ -15,6 +17,7 @@ public abstract class SchedulingStrategy {
 
     protected int quantumSizeMs;
     protected NotificationInterface notificationInterface;
+    protected domain.impl.Process executing;
 
     /**
      * Setter for `notificationInterface`.
@@ -35,7 +38,16 @@ public abstract class SchedulingStrategy {
      *
      * @return boolean - whether or not a process is currently executing.
      */
-    public abstract boolean isExecutingProcess();
+    public boolean isExecutingProcess() {
+        return executing != null;
+    }
+
+    /**
+     * Sets the currently executing process to `null`.
+     */
+    public void resetExecuting() {
+        executing = null;
+    }
 
     /**
      * Setter for the quantum size
