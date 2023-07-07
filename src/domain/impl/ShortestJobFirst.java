@@ -2,6 +2,7 @@ package domain.impl;
 
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
+import java.util.ArrayList;
 
 /**
  * This scheduling algorithm uses PriorityQueue for its ready queue, ordered by
@@ -15,11 +16,34 @@ public class ShortestJobFirst extends SchedulingStrategy {
      * Intantiates a new `ShortestJobFirst` with `PriorityQueue` as ready queue.
      */
     public ShortestJobFirst() {
-        ready = new PriorityQueue<>(10,
-                (x, y) -> Integer.valueOf(x.getTimeEstimate()).compareTo(y.getTimeEstimate()));
-        blocked = new PriorityQueue<>(10,
-                (x, y) -> Integer.valueOf(x.getBlockedFor()).compareTo(y.getBlockedFor()));
-    }
+        ArrayList<Process> aux = new ArrayList<>();
+
+        blocked = new PriorityQueue<>(10, (x, y) -> Integer.valueOf(x.getBlockedFor()).compareTo(y.getBlockedFor()));
+        ready = new PriorityQueue<>(10, (x, y) -> Integer.valueOf(x.getTimeEstimate()).compareTo(y.getTimeEstimate())) {
+            @Override
+            public boolean add(Process process) {
+                
+                //PriorityQueue is a heap, it does not guarantee order in all the elements, just the first one
+                //We can force sort PriorityQueue with a List
+                aux.clear();
+                this.offer(process);
+                
+                for (Process p : this) {
+                    aux.add(p);
+                }
+
+                this.clear();
+                aux.sort((x, y) -> Integer.valueOf(x.getTimeEstimate()).compareTo(y.getTimeEstimate()));
+
+                for (Process p : aux) {
+                    this.offer(p);
+                }
+
+                return true;
+            }
+        };
+
+    }    
 
     /**
      * Each time this method is called, it either removes a process from the
